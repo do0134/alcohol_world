@@ -5,7 +5,7 @@ import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
 
     @Transactional
@@ -25,8 +25,9 @@ public class UserService {
         });
 
         UserEntity userEntity = UserEntity.toEntity(
-                userEmail, password, nickname,statement,userImage
+                userEmail, encoder.encode(password), nickname,statement,userImage
         );
+
         userRepository.save(userEntity);
 
         return User.fromEntity(userEntity);

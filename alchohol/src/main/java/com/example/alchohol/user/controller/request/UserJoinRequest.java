@@ -1,4 +1,4 @@
-package com.example.alchohol.common.request;
+package com.example.alchohol.user.controller.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
