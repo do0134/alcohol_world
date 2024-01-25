@@ -24,9 +24,10 @@ public class UserService {
             throw new IllegalArgumentException(String.format("%s는 존재하는 email입니다.",userEmail));
         });
 
-        UserEntity userEntity = userRepository.save(UserEntity.toEntity(
+        UserEntity userEntity = UserEntity.toEntity(
                 userEmail, encoder.encode(password), nickname,statement,userImage
-                ));
+        );
+        userRepository.save(userEntity);
 
         return User.fromEntity(userEntity);
     }

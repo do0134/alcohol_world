@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
+@Table(name = "User")
 @Getter
 @Setter
 public class UserEntity {
@@ -41,11 +42,11 @@ public class UserEntity {
     private Timestamp updatedAt;
 
 
-    @OneToMany(mappedBy = "follower")
-    private List<FollowEntity> followerList;
-
-    @OneToMany(mappedBy = "following")
-    private List<FollowEntity> followingList;
+//    @OneToMany(mappedBy = "follower")
+//    private List<FollowEntity> followerList;
+//
+//    @OneToMany(mappedBy = "following")
+//    private List<FollowEntity> followingList;
 
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)

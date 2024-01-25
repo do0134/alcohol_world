@@ -5,6 +5,7 @@ import lombok.Getter;
 
 
 @Entity
+@Table(name = "follow")
 @Getter
 public class FollowEntity {
 
@@ -12,12 +13,12 @@ public class FollowEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private UserEntity follower;
-
-    @ManyToOne
-    @JoinColumn(name = "following_id")
-    private UserEntity following;
+//    @ManyToOne
+//    @JoinColumn(name = "follower_id")
+//    private UserEntity follower;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "following_id")
+//    private UserEntity following;
 
 }
