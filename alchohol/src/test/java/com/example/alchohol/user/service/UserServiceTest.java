@@ -12,8 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -37,10 +35,9 @@ public class UserServiceTest {
 
         when(userRepository.findByUserEmail(email)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
-        UserEntity user = UserEntity.toEntity(email, encoder.encode(password),statement,nickname,userImage);
-        userService.signup(email,password,nickname,statement,userImage);
 
-        Optional<UserEntity> userEntity = userRepository.findByUserEmail(email);
-
+        Assertions.assertDoesNotThrow(() ->
+                userService.signup(email, encoder.encode(password),nickname,statement,userImage)
+        );
     }
 }
