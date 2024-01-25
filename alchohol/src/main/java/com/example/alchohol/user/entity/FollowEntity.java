@@ -1,4 +1,4 @@
-package user.entity;
+package com.example.alchohol.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

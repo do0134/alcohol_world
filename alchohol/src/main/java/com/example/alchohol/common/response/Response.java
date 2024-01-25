@@ -1,4 +1,4 @@
-package common.response;
+package com.example.alchohol.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
