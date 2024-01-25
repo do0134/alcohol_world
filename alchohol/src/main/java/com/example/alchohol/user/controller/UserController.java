@@ -1,6 +1,7 @@
 package com.example.alchohol.user.controller;
 
-import com.example.alchohol.user.repository.UserRepository;
+import com.example.alchohol.common.request.UserJoinRequest;
+import com.example.alchohol.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -16,15 +17,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @PostMapping("/signup")
-    public void signup(@RequestBody Map<String, String> email) {
-        String userEmail = email.get("email");
-        log.info(String.format("%s get!!!!!!!!!!!!!!!!!!!!!", userEmail));
-        userRepository.findByUserEmail(userEmail).ifPresent( it -> {
-            log.error("222222222222222222222222222222222");
-        });
+    public void signup(@RequestBody UserJoinRequest userJoinRequest) {
+        userService.signup(userJoinRequest.getUserEmail(),userJoinRequest.getPassword(),userJoinRequest.getNickname(),userJoinRequest.getStatement(),userJoinRequest.getUserImage());
+
     }
 
 

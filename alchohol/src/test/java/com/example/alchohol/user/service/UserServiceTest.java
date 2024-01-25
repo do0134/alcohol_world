@@ -1,5 +1,6 @@
 package com.example.alchohol.user.service;
 
+import com.example.alchohol.user.dto.User;
 import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -36,8 +37,10 @@ public class UserServiceTest {
 
         when(userRepository.findByUserEmail(email)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
-        //when(userRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class)));
+        UserEntity user = UserEntity.toEntity(email, encoder.encode(password),statement,nickname,userImage);
+        userService.signup(email,password,nickname,statement,userImage);
 
-        Assertions.assertDoesNotThrow(() -> userService.signup(email,password,nickname,statement,userImage));
+        Optional<UserEntity> userEntity = userRepository.findByUserEmail(email);
+
     }
 }
