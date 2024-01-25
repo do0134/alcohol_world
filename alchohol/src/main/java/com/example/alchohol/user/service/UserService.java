@@ -1,5 +1,7 @@
 package com.example.alchohol.user.service;
 
+import com.example.alchohol.common.error.AlcoholException;
+import com.example.alchohol.common.error.ErrorCode;
 import com.example.alchohol.user.dto.User;
 import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
@@ -21,7 +23,7 @@ public class UserService {
     @Transactional
     public User signup(String userEmail, String password, String nickname, String statement, String userImage) {
         userRepository.findByUserEmail(userEmail).ifPresent(it ->{
-            throw new IllegalArgumentException(String.format("%s는 존재하는 email입니다.",userEmail));
+            throw new AlcoholException(ErrorCode.DUPLICATED_EMAIL,String.format("%s는 중복된 이메일입니다.",userEmail));
         });
 
         UserEntity userEntity = UserEntity.toEntity(
