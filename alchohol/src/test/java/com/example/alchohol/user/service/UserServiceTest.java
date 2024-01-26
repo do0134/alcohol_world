@@ -50,7 +50,6 @@ public class UserServiceTest {
     @Test
     void Jwt_생성_및_검증() {
         String email = "do0134@naver.com";
-        String password = "1234";
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
         String token = jwtTokenProvider.generateToken(email, secretKey, 1000L);
 
