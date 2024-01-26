@@ -48,7 +48,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .build();
     }
-    
+
+    /**
+     * Cors 설정을 해줄 Bean
+     * Cors Configuration을 등록해서, Cors설정을 바꿔준다.
+     * @return CorsConfigurationSource
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
@@ -62,8 +67,5 @@ public class SecurityConfig {
         corsSource.registerCorsConfiguration("/**",config);
         return corsSource;
     }
-
-
-
 
 }
