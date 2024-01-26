@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,7 +22,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -64,6 +65,17 @@ public class UserService {
     }
 
     public String userLogin(String userEmail, String password) {
+        if (!checkPassword(userEmail, password)) {
+            throw new AlcoholException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "이메일이나 비밀번호가 잘못됐습니다.");
+        }
+
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
         return jwtTokenProvider.generateToken(userEmail, secretKey, expiredTimeMs);
+    }
+
+    public Boolean checkPassword(String userEmail, String password) {
+        Optional<UserEntity> user = userRepository.findByUserEmail(userEmail);
+
+        return user.filter(userEntity -> encoder.matches(password, userEntity.getPassword())).isPresent();
     }
 }

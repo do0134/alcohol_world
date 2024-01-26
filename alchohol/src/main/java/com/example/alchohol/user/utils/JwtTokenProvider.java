@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
-@Component
 public class JwtTokenProvider {
 
     private static Key getKey(String key) {
@@ -29,5 +28,7 @@ public class JwtTokenProvider {
                 .signWith(getKey(key), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+
 
 }
