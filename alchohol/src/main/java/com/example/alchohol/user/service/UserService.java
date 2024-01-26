@@ -5,8 +5,10 @@ import com.example.alchohol.common.error.ErrorCode;
 import com.example.alchohol.user.dto.User;
 import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
+import com.example.alchohol.user.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expiredTimeMs;
+
 
     /**
      * 회원가입 API
@@ -51,5 +61,9 @@ public class UserService {
         });
 
         return true;
+    }
+
+    public String userLogin(String userEmail, String password) {
+        return jwtTokenProvider.generateToken(userEmail, secretKey, expiredTimeMs);
     }
 }

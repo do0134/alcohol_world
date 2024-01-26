@@ -25,6 +25,7 @@ public class UserServiceTest {
     @MockBean
     private BCryptPasswordEncoder encoder;
 
+
     @Test
     void 성공적으로_회원가입_하는_경우() {
         String email= "useremail@naver.com";
@@ -39,5 +40,14 @@ public class UserServiceTest {
         Assertions.assertDoesNotThrow(() ->
                 userService.signup(email, encoder.encode(password),nickname,statement,userImage)
         );
+    }
+
+    @Test
+    void Jwt_Create() {
+        String email = "do0134@naver.com";
+        String password = "1234";
+        String token = userService.userLogin(email, password);
+
+        Assertions.assertNotNull(token);
     }
 }
