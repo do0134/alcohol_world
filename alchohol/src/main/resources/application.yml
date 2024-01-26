@@ -10,8 +10,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     database: mysql
 
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  token.expired-time-ms: ${JWT_EXPIRED_DATE}
 
