@@ -1,7 +1,5 @@
 package com.example.alchohol.user.service;
 
-import com.example.alchohol.user.dto.User;
-import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
 import com.example.alchohol.user.utils.JwtTokenProvider;
 import org.junit.jupiter.api.Assertions;

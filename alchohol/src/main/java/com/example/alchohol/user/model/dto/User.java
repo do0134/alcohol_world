@@ -1,7 +1,7 @@
-package com.example.alchohol.user.dto;
+package com.example.alchohol.user.model.dto;
 
-import com.example.alchohol.user.entity.UserEntity;
-import com.example.alchohol.user.entity.UserRole;
+import com.example.alchohol.user.model.entity.UserEntity;
+import com.example.alchohol.user.model.entity.UserRole;
 import lombok.*;
 
 import java.sql.Timestamp;

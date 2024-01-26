@@ -2,8 +2,8 @@ package com.example.alchohol.user.service;
 
 import com.example.alchohol.common.error.AlcoholException;
 import com.example.alchohol.common.error.ErrorCode;
-import com.example.alchohol.user.dto.User;
-import com.example.alchohol.user.entity.UserEntity;
+import com.example.alchohol.user.model.dto.User;
+import com.example.alchohol.user.model.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
 import com.example.alchohol.user.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

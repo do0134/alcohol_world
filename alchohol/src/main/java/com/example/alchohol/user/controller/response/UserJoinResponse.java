@@ -1,6 +1,6 @@
 package com.example.alchohol.user.controller.response;
 
-import com.example.alchohol.user.dto.User;
+import com.example.alchohol.user.model.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

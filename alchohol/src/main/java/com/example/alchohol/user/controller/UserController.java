@@ -5,7 +5,7 @@ import com.example.alchohol.user.controller.request.LoginRequest;
 import com.example.alchohol.user.controller.request.UserJoinRequest;
 import com.example.alchohol.user.controller.response.LoginResponse;
 import com.example.alchohol.user.controller.response.UserJoinResponse;
-import com.example.alchohol.user.dto.User;
+import com.example.alchohol.user.model.dto.User;
 import com.example.alchohol.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Map;
 
 @Slf4j
 @Controller
