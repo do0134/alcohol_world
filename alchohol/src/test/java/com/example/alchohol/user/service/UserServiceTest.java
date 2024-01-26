@@ -3,9 +3,11 @@ package com.example.alchohol.user.service;
 import com.example.alchohol.user.dto.User;
 import com.example.alchohol.user.entity.UserEntity;
 import com.example.alchohol.user.repository.UserRepository;
+import com.example.alchohol.user.utils.JwtTokenProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +27,9 @@ public class UserServiceTest {
     @MockBean
     private BCryptPasswordEncoder encoder;
 
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+    
 
     @Test
     void 성공적으로_회원가입_하는_경우() {
@@ -43,11 +48,13 @@ public class UserServiceTest {
     }
 
     @Test
-    void Jwt_Create() {
+    void Jwt_생성_및_검증() {
         String email = "do0134@naver.com";
         String password = "1234";
-        String token = userService.userLogin(email, password);
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+        String token = jwtTokenProvider.generateToken(email, secretKey, 1000L);
 
-        Assertions.assertNotNull(token);
+
+        Assertions.assertNotEquals(jwtTokenProvider.validate(token,email,secretKey), false);
     }
 }
