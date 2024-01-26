@@ -28,9 +28,9 @@ public class SecurityConfig {
     /**
      * Spring security Filter
      * 6.1부터 현재 형태로 개발하는 것이 권장됨
-     * @param httpSecurity
-     * @return
-     * @throws Exception
+     * @param httpSecurity -> 기본 객체
+     * @return none
+     * @throws Exception -> 내부 exception
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
@@ -41,10 +41,8 @@ public class SecurityConfig {
                             authorize.requestMatchers("/admin/**").hasRole("ADMIN");
                             authorize.anyRequest().permitAll();
                         })
-                .formLogin((formLogin) -> {
-                            formLogin
-                                    .loginPage("/users/login").permitAll();
-                        })
+                .formLogin((formLogin) -> formLogin
+                        .loginPage("/users/login").permitAll())
                 .cors(Customizer.withDefaults())
                 .build();
     }
