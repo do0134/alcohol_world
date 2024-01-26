@@ -78,4 +78,14 @@ public class UserService {
 
         return user.filter(userEntity -> encoder.matches(password, userEntity.getPassword())).isPresent();
     }
+
+    public User loadUserByUserEmail(String userEmail) {
+        Optional<UserEntity> userEntity = userRepository.findByUserEmail(userEmail);
+        if (userEntity.isEmpty()) {
+            throw new AlcoholException(ErrorCode.USER_NOT_FOUND,"사용자를 찾을 수 없습니다.");
+        }
+
+        User user = User.fromEntity(userEntity.get());
+        return user;
+    }
 }
