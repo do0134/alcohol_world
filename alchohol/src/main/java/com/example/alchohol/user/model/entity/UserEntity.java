@@ -1,4 +1,4 @@
-package user.entity;
+package com.example.alchohol.user.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,12 +10,13 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
+@Table(name = "User")
 @Getter
 @Setter
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_email")
@@ -47,8 +48,12 @@ public class UserEntity {
     @OneToMany(mappedBy = "following")
     private List<FollowEntity> followingList;
 
-    @OneToMany(mappedBy = "device_name")
-    private List<DeviceEntity> deviceList;
+    @Column(name = "user_role")
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole = UserRole.CUSTOMER;
+
+//    @OneToMany(mappedBy = "device_name")
+//    private List<DeviceEntity> deviceList;
 
     @PrePersist
     void createdAt() {
@@ -58,5 +63,15 @@ public class UserEntity {
     @PreUpdate
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
+    }
+
+    public static UserEntity toEntity(String userEmail, String password, String nickname, String statement, String userImage) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserEmail(userEmail);
+        userEntity.setPassword(password);
+        userEntity.setNickname(nickname);
+        userEntity.setStatement(statement);
+        userEntity.setUserImage(userImage);
+        return userEntity;
     }
 }
