@@ -53,7 +53,6 @@ public class UserServiceTest {
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
         String token = jwtTokenProvider.generateToken(email, secretKey, 1000L);
 
-
         Assertions.assertNotEquals(jwtTokenProvider.validate(token,email,secretKey), false);
     }
 }
