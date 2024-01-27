@@ -1,5 +1,7 @@
 package com.example.alchohol.user.controller;
 
+import com.example.alchohol.common.error.AlcoholException;
+import com.example.alchohol.common.error.ErrorCode;
 import com.example.alchohol.common.response.Response;
 import com.example.alchohol.user.controller.request.*;
 import com.example.alchohol.user.controller.response.*;
@@ -18,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public Response<UserJoinResponse> signup(@RequestBody UserJoinRequest userJoinRequest) {
+    public Response<UserJoinResponse> signup(@ModelAttribute UserJoinRequest userJoinRequest) {
         User user = userService.signup(userJoinRequest.getUserEmail(),userJoinRequest.getPassword(),userJoinRequest.getNickname(),userJoinRequest.getStatement(),userJoinRequest.getUserImage());
         return Response.success(UserJoinResponse.fromUser(user));
     }
@@ -28,7 +30,7 @@ public class UserController {
         String userEmail = loginRequest.getUserEmail();
         String password = loginRequest.getPassword();
         String token = userService.userLogin(userEmail, password);
-        System.out.println(token + "11111111111111111111111111");
+
         return Response.success(new LoginResponse(token));
     }
 

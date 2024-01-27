@@ -12,7 +12,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -26,8 +34,11 @@ public class UserService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    @Value("${jwt.token.expired-time-ms}")
+    @Value("${jwt.token-expired-time-ms}")
     private Long expiredTimeMs;
+
+    @Value("${image.upload-dir}")
+    private String uploadDir;
 
 
     /**
@@ -42,13 +53,15 @@ public class UserService {
      * @return User
      */
     @Transactional
-    public User signup(String userEmail, String password, String nickname, String statement, String userImage) {
+    public User signup(String userEmail, String password, String nickname, String statement, MultipartFile userImage) {
         userRepository.findByUserEmail(userEmail).ifPresent(it ->{
             throw new AlcoholException(ErrorCode.DUPLICATED_EMAIL, "이미 가입한 회원입니다.");
         });
 
+        String imagePath = saveImage(userImage, nickname);
+
         UserEntity userEntity = UserEntity.toEntity(
-                userEmail, encoder.encode(password), nickname,statement,userImage
+                userEmail, encoder.encode(password), nickname,statement,imagePath
         );
 
         userRepository.save(userEntity);
@@ -87,5 +100,59 @@ public class UserService {
 
         User user = User.fromEntity(userEntity.get());
         return user;
+    }
+
+    public String saveImage(MultipartFile image, String fileName) {
+        Path path = Paths.get(uploadDir);
+        try {
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+
+            String fileExtension = getFileExtension(Objects.requireNonNull(image.getOriginalFilename()));
+            String newFileName = uploadDir + "/" + fileName+fileExtension;
+
+            if (Files.exists(Paths.get(newFileName))) {
+                throw new AlcoholException(ErrorCode.DUPLICATED_PROFILE_IMAGE);
+            }
+
+            File file = new File(newFileName);
+            if (!createFile(file)) {
+                throw new AlcoholException(ErrorCode.CANT_SAVE);
+            }
+
+            writeFile(file, image);
+
+            return newFileName;
+
+        } catch (IOException | NullPointerException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf("."));
+    }
+
+    public Boolean createFile(File file) {
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public void writeFile(File file, MultipartFile image) {
+        try (FileOutputStream fos = new FileOutputStream(file)){
+            byte[] bytes = image.getBytes();
+            fos.write(bytes);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+
+
+
     }
 }
