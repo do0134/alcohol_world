@@ -1,15 +1,20 @@
 package com.example.alchohol.user.utils.config;
 
+import com.example.alchohol.common.error.CustomAuthenticationEntryPoint;
+import com.example.alchohol.user.service.UserService;
+import com.example.alchohol.user.utils.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,10 +25,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final UserService userService;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
 
     /**
      * Spring security Filter
@@ -35,15 +41,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> {
-                            authorize.requestMatchers("/users/join").permitAll();
-                            authorize.requestMatchers("/admin/**").hasRole("ADMIN");
-                            authorize.anyRequest().permitAll();
-                        })
-                .formLogin((formLogin) -> formLogin
-                        .loginPage("/users/login").permitAll())
-                .cors(Customizer.withDefaults())
+                    authorize.requestMatchers("/api/v1/users/signup").permitAll()
+                            .requestMatchers("/api/v1/users/login").permitAll()
+                            .requestMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
+                            .requestMatchers("/admin/**").hasRole("ADMIN");
+                    authorize.anyRequest().authenticated();
+                })
+                .exceptionHandling(exceptionHander -> exceptionHander
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
+                .addFilterBefore(new JwtTokenFilter(secretKey, userService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

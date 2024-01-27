@@ -14,13 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
+
 import java.util.Optional;
 
 @Slf4j
@@ -30,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final FileService fileService;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -37,8 +32,7 @@ public class UserService {
     @Value("${jwt.token-expired-time-ms}")
     private Long expiredTimeMs;
 
-    @Value("${image.upload-dir}")
-    private String uploadDir;
+
 
 
     /**
@@ -58,7 +52,8 @@ public class UserService {
             throw new AlcoholException(ErrorCode.DUPLICATED_EMAIL, "이미 가입한 회원입니다.");
         });
 
-        String imagePath = saveImage(userImage, nickname);
+        checkNickname(nickname);
+        String imagePath = fileService.saveImage(userImage, nickname);
 
         UserEntity userEntity = UserEntity.toEntity(
                 userEmail, encoder.encode(password), nickname,statement,imagePath
@@ -86,6 +81,36 @@ public class UserService {
         return jwtTokenProvider.generateToken(userEmail, secretKey, expiredTimeMs);
     }
 
+    public User userProfile(Long userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+
+        if (userEntity.isEmpty()) {
+            throw new AlcoholException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return User.fromEntity(userEntity.get());
+    }
+
+    @Transactional
+    public User updateUserProfile(Long userId, Optional<String> password, String nickname, String statement, Optional<MultipartFile> image) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
+
+        if (!userEntity.getId().equals(userId)) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
+        }
+
+        password.ifPresent(s -> userEntity.setPassword(encoder.encode(s)));
+
+        image.ifPresent(multipartFile -> fileService.updateImage(userEntity.getUserImage(), multipartFile, userEntity.getNickname()));
+
+        userEntity.setNickname(nickname);
+        userEntity.setStatement(statement);
+        userEntity.setStatement(statement);
+        userEntity.setUserImage(userEntity.getUserImage());
+
+        return User.fromEntity(userRepository.saveAndFlush(userEntity));
+    }
+
     public Boolean checkPassword(String userEmail, String password) {
         Optional<UserEntity> user = userRepository.findByUserEmail(userEmail);
 
@@ -102,57 +127,6 @@ public class UserService {
         return user;
     }
 
-    public String saveImage(MultipartFile image, String fileName) {
-        Path path = Paths.get(uploadDir);
-        try {
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-
-            String fileExtension = getFileExtension(Objects.requireNonNull(image.getOriginalFilename()));
-            String newFileName = uploadDir + "/" + fileName+fileExtension;
-
-            if (Files.exists(Paths.get(newFileName))) {
-                throw new AlcoholException(ErrorCode.DUPLICATED_PROFILE_IMAGE);
-            }
-
-            File file = new File(newFileName);
-            if (!createFile(file)) {
-                throw new AlcoholException(ErrorCode.CANT_SAVE);
-            }
-
-            writeFile(file, image);
-
-            return newFileName;
-
-        } catch (IOException | NullPointerException e) {
-            log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    public String getFileExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf("."));
-    }
-
-    public Boolean createFile(File file) {
-        try {
-            return file.createNewFile();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return false;
-        }
-    }
-
-    public void writeFile(File file, MultipartFile image) {
-        try (FileOutputStream fos = new FileOutputStream(file)){
-            byte[] bytes = image.getBytes();
-            fos.write(bytes);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
 
 
-
-    }
 }
