@@ -43,4 +43,10 @@ public class CommentEntity {
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
     }
+
+    public static CommentEntity toEntity(String content) {
+        CommentEntity commentEntity = new CommentEntity();
+        commentEntity.setContent(content);
+        return commentEntity;
+    }
 }

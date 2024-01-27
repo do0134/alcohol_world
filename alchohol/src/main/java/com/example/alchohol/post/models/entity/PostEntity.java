@@ -26,12 +26,15 @@ public class PostEntity {
     @Lob
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
     @OneToMany(mappedBy = "post")
     private List<CommentEntity> commentList;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostLikeEntity> postLikeList;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -49,10 +52,11 @@ public class PostEntity {
         this.updatedAt = Timestamp.from(Instant.now());
     }
 
-    public static PostEntity toEntity(String title, String content) {
+    public static PostEntity toEntity(String title, String content, UserEntity userEntity) {
         PostEntity postEntity = new PostEntity();
         postEntity.setTitle(title);
         postEntity.setContent(content);
+        postEntity.setUser(userEntity);
         return postEntity;
     }
 }
