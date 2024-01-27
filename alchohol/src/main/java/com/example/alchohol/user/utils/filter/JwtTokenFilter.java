@@ -1,5 +1,7 @@
 package com.example.alchohol.user.utils.filter;
 
+import com.example.alchohol.common.error.AlcoholException;
+import com.example.alchohol.common.error.ErrorCode;
 import com.example.alchohol.user.model.dto.User;
 import com.example.alchohol.user.service.UserService;
 import com.example.alchohol.user.utils.JwtTokenProvider;
@@ -32,14 +34,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException
     {
-        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final Optional<String> token = Optional.ofNullable(resolveToken(header));
-
-        if (token.isEmpty()) {
-            log.error("헤더가 Bearer 로 시작하지 않습니다. {}", request.getRequestURI());
-        } else {
-            Authentication auth = getAuthentication(token.get(), secretKey);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+            final Optional<String> token = Optional.ofNullable(resolveToken(header));
+            if (token.isEmpty()) {
+                log.error("헤더가 Bearer 로 시작하지 않습니다. {}", request.getRequestURI());
+                throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
+            } else {
+                Authentication auth = getAuthentication(token.get(), secretKey);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+            filterChain.doFilter(request, response);
+        } catch (AlcoholException e) {
+            log.error(e.getMessage());
         }
 
         filterChain.doFilter(request, response);
