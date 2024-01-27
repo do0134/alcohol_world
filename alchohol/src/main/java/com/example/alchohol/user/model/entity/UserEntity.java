@@ -1,5 +1,7 @@
 package com.example.alchohol.user.model.entity;
 
+import com.example.alchohol.post.models.entity.CommentEntity;
+import com.example.alchohol.post.models.entity.PostEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,6 +53,12 @@ public class UserEntity {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.CUSTOMER;
+
+    @OneToMany(mappedBy = "user")
+    private List<PostEntity> postList;
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentEntity> commentList;
 
 //    @OneToMany(mappedBy = "device_name")
 //    private List<DeviceEntity> deviceList;

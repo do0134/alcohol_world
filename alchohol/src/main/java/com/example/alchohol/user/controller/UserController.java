@@ -45,7 +45,7 @@ public class UserController {
     // TODO: 지금 Image 파일 저장할 때, 이름 저장 로직이 잘못됨. 기존 파일의 이름으로 저장
     // TODO: 무슨 이유인지 모르겠는데 토큰 인가를 건드리다가 모든 Error가 401로 나옴 해결이 필요함
     @PutMapping("/{userId}")
-    public Response<UserProfileResponse> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute UserJoinRequest userJoinRequest, Authentication authentication) {
+    public Response<UserProfileResponse> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute UserJoinRequest userJoinRequest) {
 
         User user = userService.updateUserProfile(
                 userId, Optional.ofNullable(userJoinRequest.getPassword()),

@@ -44,11 +44,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Authentication auth = getAuthentication(token.get(), secretKey);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-            filterChain.doFilter(request, response);
+
         } catch (AlcoholException e) {
             log.error(e.getMessage());
         }
-
         filterChain.doFilter(request, response);
     }
 
