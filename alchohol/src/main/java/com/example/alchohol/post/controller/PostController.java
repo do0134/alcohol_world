@@ -2,6 +2,7 @@ package com.example.alchohol.post.controller;
 
 import com.example.alchohol.common.response.Response;
 import com.example.alchohol.post.controller.Request.PostRequest;
+import com.example.alchohol.post.service.LikeService;
 import com.example.alchohol.post.service.PostService;
 import com.example.alchohol.user.model.dto.User;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+    private final LikeService likeService;
 
     @GetMapping("/")
     public Response<Void> getPosts() {
@@ -33,6 +35,12 @@ public class PostController {
 
     @DeleteMapping("/{postPk}")
     public Response<Void> deletePost(@PathVariable("postPk") Long postId) {
+        return Response.success();
+    }
+
+    @PostMapping("/{postPk}/likes")
+    private Response<Void> postLike(@AuthenticationPrincipal User user,@PathVariable("postPk") Long postId) {
+        likeService.postLike(user.getUserEmail(), postId);
         return Response.success();
     }
 }

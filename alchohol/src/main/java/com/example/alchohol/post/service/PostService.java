@@ -24,4 +24,5 @@ public class PostService {
         PostEntity postEntity = PostEntity.toEntity(title, content, userEntity);
         postRepository.save(postEntity);
     }
+
 }
