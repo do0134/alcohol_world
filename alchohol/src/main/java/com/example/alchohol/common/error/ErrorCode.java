@@ -14,6 +14,8 @@ public enum ErrorCode {
     CANT_SAVE(HttpStatus.BAD_REQUEST, "프로필 사진을 저장할 수 없습니다."),
     DUPLICATED_PROFILE_IMAGE(HttpStatus.CONFLICT, "이미 같은 닉네임으로 저장된 프로필 사진이 존재합니다."),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "허가받지 않은 접근입니다."),
+    ALREADY_FOLLOW(HttpStatus.CONFLICT, "이미 팔로우한 계정입니다."),
+
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
     ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다.");
 
