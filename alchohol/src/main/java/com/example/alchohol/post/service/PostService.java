@@ -4,7 +4,6 @@ import com.example.alchohol.common.error.AlcoholException;
 import com.example.alchohol.common.error.ErrorCode;
 import com.example.alchohol.post.controller.Response.PostResponse;
 import com.example.alchohol.post.models.dto.Activate;
-import com.example.alchohol.post.models.dto.ActiveType;
 import com.example.alchohol.post.models.dto.Post;
 import com.example.alchohol.post.models.entity.CommentEntity;
 import com.example.alchohol.post.models.entity.PostEntity;
@@ -12,8 +11,6 @@ import com.example.alchohol.post.models.entity.PostLikeEntity;
 import com.example.alchohol.post.repository.CommentRepository;
 import com.example.alchohol.post.repository.PostLikeRepository;
 import com.example.alchohol.post.repository.PostRepository;
-import com.example.alchohol.user.model.dto.PostUser;
-import com.example.alchohol.user.model.dto.User;
 import com.example.alchohol.user.model.entity.FollowEntity;
 import com.example.alchohol.user.model.entity.UserEntity;
 import com.example.alchohol.user.repository.FollowRepository;
@@ -63,7 +60,7 @@ public class PostService {
         List<Long> followingIdList = new ArrayList<>();
 
         for (FollowEntity followEntity: followingList) {
-            followingIdList.add(followEntity.getId());
+            followingIdList.add(followEntity.getFollowing().getId());
         }
 
         List<PostEntity> postEntityList = postRepository.findAllByUserInFollowingIds(followingIdList);
@@ -71,7 +68,7 @@ public class PostService {
         List<CommentEntity> commentEntityList = commentRepository.findAllByUserInFollowingIds(followingIdList);
         List<FollowEntity> followEntityList = followRepository.findAllByUserInFollowingIds(followingIdList);
 
-        if (postEntityList != null) {
+        if (!postEntityList .isEmpty()) {
             for (PostEntity post:postEntityList) {
                 feeds.add(Activate.fromEntity(post));
             }
@@ -96,8 +93,7 @@ public class PostService {
         }
 
         Comparator<Activate> sortKey = Comparator.comparing(Activate::getCreatedAt).reversed();
-        Collections.sort(feeds, sortKey);
-
+        feeds.sort(sortKey);
 
         return feeds;
     }

@@ -48,8 +48,8 @@ public class Activate {
 
     public static Activate fromEntity(FollowEntity follow) {
         return new Activate(
-                ActiveType.COMMENT,
-                String.format("%s가 %s에 댓글을 달았습니다.",follow.getFollower().getNickname(),follow.getFollowing().getNickname()),
+                ActiveType.FOLLOW,
+                String.format("%s가 %s를 팔로우합니다.",follow.getFollower().getNickname(),follow.getFollowing().getNickname()),
                 null,
                 follow.getCreatedAt()
         );
