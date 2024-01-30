@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -46,14 +48,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers("/api/v1/auth/signup").permitAll()
                             .requestMatchers("/api/v1/auth/login").permitAll()
-                            .requestMatchers(HttpMethod.GET,"/api/v1/posts/**").permitAll()
-                            .requestMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 })
                 .exceptionHandling(exceptionHandler -> exceptionHandler
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
-                .addFilterBefore(new JwtTokenFilter(secretKey, userService), UsernamePasswordAuthenticationFilter.class)
+                .logout((logout) -> {
+
+                        }
+                )
+                .addFilterBefore(new JwtTokenFilter(secretKey, userService,redisTemplate), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

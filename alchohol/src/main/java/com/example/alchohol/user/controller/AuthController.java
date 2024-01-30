@@ -2,6 +2,7 @@ package com.example.alchohol.user.controller;
 
 import com.example.alchohol.common.response.Response;
 import com.example.alchohol.user.controller.request.LoginRequest;
+import com.example.alchohol.user.controller.request.LogoutRequest;
 import com.example.alchohol.user.controller.request.UserJoinRequest;
 import com.example.alchohol.user.controller.response.LoginResponse;
 import com.example.alchohol.user.controller.response.UserJoinResponse;
@@ -9,6 +10,7 @@ import com.example.alchohol.user.model.dto.User;
 import com.example.alchohol.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,10 +29,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public Response<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        String userEmail = loginRequest.getUserEmail();
-        String password = loginRequest.getPassword();
-        String token = userService.userLogin(userEmail, password);
+        String token = userService.userLogin(loginRequest.getUserEmail(), loginRequest.getPassword(), loginRequest.getDeviceId());
 
         return Response.success(new LoginResponse(token));
+    }
+
+    @PostMapping("/logout")
+    public Response<Void> logout(@AuthenticationPrincipal User user, @RequestBody LogoutRequest logoutRequest) {
+        userService.logout(user.getUserEmail(), logoutRequest.getDeviceId());
+        return Response.success();
     }
 }

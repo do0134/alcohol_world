@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/password")
-    public Response<Void> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute PasswordRequest passwordRequest, @AuthenticationPrincipal User user) {
+    public Response<Void> updateProfile(@PathVariable("userId") Long userId, @RequestBody PasswordRequest passwordRequest, @AuthenticationPrincipal User user) {
         userService.updatePassword(userId, user.getUserEmail(), passwordRequest.getPassword());
         return Response.success();
     }
