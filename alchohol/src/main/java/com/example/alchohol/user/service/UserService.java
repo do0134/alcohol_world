@@ -92,23 +92,29 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUserProfile(Long userId, Optional<String> password, String nickname, String statement, Optional<MultipartFile> image) {
+    public User updateUserProfile(Long userId, String userEmail, String nickname, String statement, Optional<MultipartFile> image) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
 
-        if (!userEntity.getId().equals(userId)) {
-            throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
-        }
-
-        password.ifPresent(s -> userEntity.setPassword(encoder.encode(s)));
+        checkUserSelf(userEntity.getUserEmail(), userEmail);
 
         image.ifPresent(multipartFile -> fileService.updateImage(userEntity.getUserImage(), multipartFile, userEntity.getNickname()));
 
         userEntity.setNickname(nickname);
         userEntity.setStatement(statement);
-        userEntity.setStatement(statement);
         userEntity.setUserImage(userEntity.getUserImage());
 
         return User.fromEntity(userRepository.saveAndFlush(userEntity));
+    }
+
+    @Transactional
+    public void updatePassword(Long userId,String userEmail, String password) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.INVALID_PERMISSION, "본인의 비밀번호만 수정가능합니다."));
+
+        checkUserSelf(userEntity.getUserEmail(), userEmail);
+
+        userEntity.setPassword(encoder.encode(password));
+
+        userRepository.saveAndFlush(userEntity);
     }
 
     public Boolean checkPassword(String userEmail, String password) {
@@ -125,6 +131,12 @@ public class UserService {
 
         User user = User.fromEntity(userEntity.get());
         return user;
+    }
+
+    public void checkUserSelf(String userEmail1, String userEmail2) {
+        if (!userEmail1.equals(userEmail2)) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "본인의 프로필만 수정 가능합니다.");
+        }
     }
 
 }
