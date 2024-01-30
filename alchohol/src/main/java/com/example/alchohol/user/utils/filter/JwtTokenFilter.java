@@ -39,6 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             final Optional<String> token = Optional.ofNullable(resolveToken(header));
             if (token.isEmpty()) {
                 log.error("헤더가 Bearer 로 시작하지 않습니다. {}", request.getRequestURI());
+                throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "인증받지 않은 요청입니다.");
             } else {
                 Authentication auth = getAuthentication(token.get(), secretKey);
                 SecurityContextHolder.getContext().setAuthentication(auth);
