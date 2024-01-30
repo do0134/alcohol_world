@@ -2,7 +2,7 @@ package com.example.alchohol.post.controller;
 
 import com.example.alchohol.common.response.Response;
 import com.example.alchohol.post.controller.Request.PostRequest;
-import com.example.alchohol.post.controller.Response.PostResponse;
+
 import com.example.alchohol.post.models.dto.Post;
 import com.example.alchohol.post.service.LikeService;
 import com.example.alchohol.post.service.PostService;
@@ -21,6 +21,7 @@ public class PostController {
 
     @GetMapping("/")
     public Response<Void> getPosts() {
+
         return Response.success();
     }
 

@@ -60,9 +60,6 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<CommentEntity> commentList;
 
-//    @OneToMany(mappedBy = "device_name")
-//    private List<DeviceEntity> deviceList;
-
     @PrePersist
     void createdAt() {
         this.createdAt = Timestamp.from(Instant.now());
