@@ -39,14 +39,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             final Optional<String> token = Optional.ofNullable(resolveToken(header));
             if (token.isEmpty()) {
                 log.error("헤더가 Bearer 로 시작하지 않습니다. {}", request.getRequestURI());
-                throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
             } else {
                 Authentication auth = getAuthentication(token.get(), secretKey);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
 
-        } catch (AlcoholException e) {
+        } catch (RuntimeException e) {
             log.error(e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
         }
         filterChain.doFilter(request, response);
     }

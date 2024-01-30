@@ -21,8 +21,13 @@ public class FollowService {
 
     @Transactional
     public void userFollow(String userEmail, Long followingId) {
-        UserEntity follower = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
-        UserEntity following = userRepository.findById(followingId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
+        UserEntity follower = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        if (follower.getId().equals(followingId)) {
+            throw new AlcoholException(ErrorCode.ALREADY_FOLLOW, "스스로를 팔로우할 수 없습니다.");
+        }
+
+        UserEntity following = userRepository.findById(followingId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         Optional<FollowEntity> ifFollow = followRepository.findByFollowerAndFollowing(follower, following);
 

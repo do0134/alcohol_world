@@ -51,7 +51,7 @@ public class SecurityConfig {
                             .requestMatchers("/admin/**").hasRole("ADMIN");
                     authorize.anyRequest().authenticated();
                 })
-                .exceptionHandling(exceptionHander -> exceptionHander
+                .exceptionHandling(exceptionHandler -> exceptionHandler
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
                 .addFilterBefore(new JwtTokenFilter(secretKey, userService), UsernamePasswordAuthenticationFilter.class)
                 .build();

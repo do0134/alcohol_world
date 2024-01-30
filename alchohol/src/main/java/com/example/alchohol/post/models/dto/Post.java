@@ -23,7 +23,7 @@ public class Post {
     private String title;
     private String content;
     private List<Comment> commentList;
-     private List<Like> likeList;
+    private List<Like> likeList;
 
 
     public static Post fromEntity(PostEntity postEntity) {

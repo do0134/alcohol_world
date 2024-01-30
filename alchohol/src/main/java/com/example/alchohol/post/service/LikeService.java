@@ -29,6 +29,7 @@ public class LikeService {
             throw new AlcoholException(ErrorCode.ALREADY_LIKE, "이미 좋아요 누른 게시물입니다");
         }
 
+
         postLikeRepository.save(PostLikeEntity.toEntity(user, post));
     }
 }
