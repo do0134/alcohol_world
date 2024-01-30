@@ -95,11 +95,21 @@ public class UserService {
     public User updateUserProfile(Long userId, Optional<String> password, String nickname, String statement, Optional<MultipartFile> image) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
 
+<<<<<<< HEAD
+=======
+        if (!userEntity.getUserEmail().equals(userEmail)) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "본인의 프로필만 수정 가능합니다.");
+        }
+
+>>>>>>> parent of 7fb8fd0 (hotfix: 비밀번호 수정 분리)
         if (!userEntity.getId().equals(userId)) {
             throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
         }
 
+<<<<<<< HEAD
         password.ifPresent(s -> userEntity.setPassword(encoder.encode(s)));
+=======
+>>>>>>> parent of 7fb8fd0 (hotfix: 비밀번호 수정 분리)
 
         image.ifPresent(multipartFile -> fileService.updateImage(userEntity.getUserImage(), multipartFile, userEntity.getNickname()));
 
