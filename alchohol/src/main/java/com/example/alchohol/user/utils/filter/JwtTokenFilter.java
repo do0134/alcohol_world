@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -29,6 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final String secretKey;
 
     private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -37,12 +42,31 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
             final Optional<String> token = Optional.ofNullable(resolveToken(header));
+
             if (token.isEmpty()) {
                 log.error("헤더가 Bearer 로 시작하지 않습니다. {}", request.getRequestURI());
                 throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "인증받지 않은 요청입니다.");
             } else {
-                Authentication auth = getAuthentication(token.get(), secretKey);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+                String userEmail = jwtTokenProvider.getUserEmail(token.get(), secretKey);
+
+                boolean isExist = false;
+
+                for (Object deviceId : Objects.requireNonNull(redisTemplate.opsForSet().members(userEmail))) {
+
+                    String redisKey = userService.getRedisKey(userEmail, deviceId.toString());
+                    if (Objects.equals(redisTemplate.opsForValue().get(redisKey), token.get())) {
+                        isExist = true;
+                    }
+                }
+
+                if (isExist) {
+                    Authentication auth = getAuthentication(token.get(), secretKey);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                } else {
+                    log.error("잘못된 토큰입니다.");
+                    throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
+                }
             }
 
         } catch (RuntimeException e) {
@@ -76,4 +100,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         return authentication;
     }
+
 }
