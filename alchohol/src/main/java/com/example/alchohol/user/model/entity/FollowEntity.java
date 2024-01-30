@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 
 @Entity
 @Table(name = "follow")
@@ -22,6 +25,13 @@ public class FollowEntity {
     @ManyToOne
     @JoinColumn(name = "following_id")
     private UserEntity following;
+
+    private Timestamp createdAt;
+
+    @PrePersist
+    void createdAt() {
+        this.createdAt = Timestamp.from(Instant.now());
+    }
 
     public static FollowEntity toEntity(UserEntity follower, UserEntity following) {
         FollowEntity followEntity = new FollowEntity();
