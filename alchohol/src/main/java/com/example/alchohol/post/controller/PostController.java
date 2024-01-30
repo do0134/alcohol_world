@@ -2,6 +2,8 @@ package com.example.alchohol.post.controller;
 
 import com.example.alchohol.common.response.Response;
 import com.example.alchohol.post.controller.Request.PostRequest;
+import com.example.alchohol.post.controller.Response.PostResponse;
+import com.example.alchohol.post.models.dto.Post;
 import com.example.alchohol.post.service.LikeService;
 import com.example.alchohol.post.service.PostService;
 import com.example.alchohol.user.model.dto.User;
@@ -20,6 +22,12 @@ public class PostController {
     @GetMapping("/")
     public Response<Void> getPosts() {
         return Response.success();
+    }
+
+    @GetMapping("/{postPk}")
+    public Response<Post> getPost(@PathVariable("postPk") Long postId) {
+        Post post = postService.getPost(postId);
+        return Response.success(post);
     }
 
     @PostMapping("/")

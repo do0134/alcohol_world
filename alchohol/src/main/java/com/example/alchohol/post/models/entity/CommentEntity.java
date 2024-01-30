@@ -1,6 +1,8 @@
 package com.example.alchohol.post.models.entity;
 
 import com.example.alchohol.user.model.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +27,7 @@ public class CommentEntity {
     private UserEntity user;
 
     @ManyToOne()
+    @JsonIgnore
     @JoinColumn(name = "post_id")
     private PostEntity post;
 
