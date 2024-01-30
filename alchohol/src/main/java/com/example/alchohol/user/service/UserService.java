@@ -92,19 +92,21 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUserProfile(Long userId, Optional<String> password, String nickname, String statement, Optional<MultipartFile> image) {
+    public User updateUserProfile(Long userId, String userEmail, String nickname, String statement, Optional<MultipartFile> image) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
+
+        if (!userEntity.getUserEmail().equals(userEmail)) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "본인의 프로필만 수정 가능합니다.");
+        }
 
         if (!userEntity.getId().equals(userId)) {
             throw new AlcoholException(ErrorCode.INVALID_PERMISSION);
         }
 
-        password.ifPresent(s -> userEntity.setPassword(encoder.encode(s)));
 
         image.ifPresent(multipartFile -> fileService.updateImage(userEntity.getUserImage(), multipartFile, userEntity.getNickname()));
 
         userEntity.setNickname(nickname);
-        userEntity.setStatement(statement);
         userEntity.setStatement(statement);
         userEntity.setUserImage(userEntity.getUserImage());
 
