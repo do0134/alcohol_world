@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -51,10 +50,10 @@ public class PostService {
     public List<Activate> getNewsFeed(String userEmail) {
         UserEntity user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
         List<FollowEntity> followingList = followRepository.findAllByFollower(user).orElse(null);
-        List<Activate> feeds = new ArrayList<>();
+
 
         if (followingList == null) {
-            return feeds;
+            return new ArrayList<>();
         }
 
         List<Long> followingIdList = new ArrayList<>();
@@ -63,10 +62,34 @@ public class PostService {
             followingIdList.add(followEntity.getFollowing().getId());
         }
 
-        List<PostEntity> postEntityList = postRepository.findAllByUserInFollowingIds(followingIdList);
-        List<PostLikeEntity> postLikeEntityList = postLikeRepository.findAllByUserInFollowingIds(followingIdList);
-        List<CommentEntity> commentEntityList = commentRepository.findAllByUserInFollowingIds(followingIdList);
-        List<FollowEntity> followEntityList = followRepository.findAllByUserInFollowingIds(followingIdList);
+        List<Activate> feeds = makeFeeds(followingIdList, followingList);
+        return feeds;
+    }
+
+    public List<Activate> getReverseFeed(String userEmail) {
+        UserEntity user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        List<FollowEntity> followerList = followRepository.findAllByFollowing(user).orElse(null);
+
+        List<Long> followerIdList = new ArrayList<>();
+
+        if (followerList == null) {
+            return new ArrayList<>();
+        }
+
+        for (FollowEntity followEntity: followerList) {
+            followerIdList.add(followEntity.getFollower().getId());
+        }
+
+        List<Activate> feeds = makeFeeds(followerIdList, followerList);
+        return feeds;
+    }
+
+    public List<Activate> makeFeeds(List<Long> followIds, List<FollowEntity> followList) {
+        List<Activate> feeds = new ArrayList<>();
+        List<PostEntity> postEntityList = postRepository.findAllByUserInFollowingIds(followIds);
+        List<PostLikeEntity> postLikeEntityList = postLikeRepository.findAllByUserInFollowingIds(followIds);
+        List<CommentEntity> commentEntityList = commentRepository.findAllByUserInFollowingIds(followIds);
+        List<FollowEntity> followEntityList = followRepository.findAllByUserInFollowingIds(followIds);
 
         if (!postEntityList .isEmpty()) {
             for (PostEntity post:postEntityList) {
@@ -87,7 +110,7 @@ public class PostService {
         }
 
         if (!followEntityList.isEmpty()) {
-            for (FollowEntity followEntity: followingList) {
+            for (FollowEntity followEntity: followList) {
                 feeds.add(Activate.fromEntity(followEntity));
             }
         }

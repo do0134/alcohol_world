@@ -9,6 +9,7 @@ import com.example.alchohol.user.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final FileService fileService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -70,13 +74,44 @@ public class UserService {
         return true;
     }
 
-    public String userLogin(String userEmail, String password) {
+    public String userLogin(String userEmail, String password, String deviceId) {
         if (!checkPassword(userEmail, password)) {
             throw new AlcoholException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "이메일이나 비밀번호가 잘못됐습니다.");
         }
 
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
-        return jwtTokenProvider.generateToken(userEmail, secretKey, expiredTimeMs);
+        String key = getRedisKey(userEmail,deviceId);
+        String accessToken = jwtTokenProvider.generateToken(userEmail, secretKey, expiredTimeMs);
+
+        redisTemplate.opsForSet().add(userEmail, deviceId);
+        redisTemplate.opsForValue().set(key, accessToken);
+        redisTemplate.expire(key, expiredTimeMs, TimeUnit.SECONDS);
+
+        return accessToken;
+    }
+
+    public void logout(String userEmail, String deviceId) {
+        String key = getRedisKey(userEmail, deviceId);
+
+        if (redisTemplate.hasKey(key) == null || Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "허가받지 않은 접근입니다.");
+        }
+
+        redisTemplate.delete(key);
+        redisTemplate.opsForSet().remove(userEmail,deviceId);
+    }
+
+    public void logoutAll(String userEmail) {
+        Set<Object> deviceList = redisTemplate.opsForSet().members(userEmail);
+        System.out.println(deviceList);
+
+        if (deviceList == null) {
+            return;
+        }
+
+        for (Object deviceId: deviceList) {
+            logout(userEmail, deviceId.toString());
+        }
     }
 
     public User userProfile(Long userId) {
@@ -113,6 +148,7 @@ public class UserService {
         userEntity.setPassword(encoder.encode(password));
 
         userRepository.saveAndFlush(userEntity);
+        logoutAll(userEmail);
     }
 
     public Boolean checkPassword(String userEmail, String password) {
@@ -135,6 +171,10 @@ public class UserService {
         if (!userEmail1.equals(userEmail2)) {
             throw new AlcoholException(ErrorCode.INVALID_PERMISSION, "본인의 프로필만 수정 가능합니다.");
         }
+    }
+
+    public String getRedisKey(String userEmail, String deviceId) {
+        return "JWT_USER: " + userEmail + "DEVICE: " + deviceId;
     }
 
 }
