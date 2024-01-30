@@ -28,13 +28,19 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public Response<UserProfileResponse> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute UserJoinRequest userJoinRequest, @AuthenticationPrincipal User user) {
+    public Response<UserProfileResponse> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute UserModifyRequest userModifyRequest, @AuthenticationPrincipal User user) {
         User nowUser = userService.updateUserProfile(
-                userId, user.getUserEmail(), userJoinRequest.getNickname(), userJoinRequest.getStatement(),
-                Optional.ofNullable(userJoinRequest.getUserImage())
+                userId, user.getUserEmail(), userModifyRequest.getNickname(), userModifyRequest.getStatement(),
+                Optional.ofNullable(userModifyRequest.getUserImage())
         );
 
         return Response.success(new UserProfileResponse(nowUser.getUserEmail(),nowUser.getNickname(),nowUser.getStatement(),nowUser.getUserImage()));
+    }
+
+    @PutMapping("/{userId}/password")
+    public Response<Void> updateProfile(@PathVariable("userId") Long userId, @ModelAttribute PasswordRequest passwordRequest, @AuthenticationPrincipal User user) {
+        userService.updatePassword(userId, user.getUserEmail(), passwordRequest.getPassword());
+        return Response.success();
     }
 
 }
