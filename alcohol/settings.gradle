@@ -1,0 +1,5 @@
+rootProject.name = 'alcohol'
+
+include "UserService"
+include "NewsfeedService"
+include "ActivityService"
