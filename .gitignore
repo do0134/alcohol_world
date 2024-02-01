@@ -287,6 +287,6 @@ $RECYCLE.BIN/
 *.lnk
 
 *.env
-*.yml
+application.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/redis,java,intellij,intellij+iml,intellij+all,windows

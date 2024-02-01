@@ -1,0 +1,37 @@
+version: "2.2"
+services:
+#  alcohol-app:
+#    container_name: alcohol-world-app
+#    build: .
+#    depends_on:
+#      - alcohol-world-database
+#      - alcohol-world-redis
+#    image: do0134/alcohol-world-app
+#    environment:
+#      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+#      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+#    ports:
+#      - "8080:8080"
+#    restart: always
+  
+  alcohol-world-redis:
+    container_name: alcohol-world-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: do0134/alcohol-world-redis
+    ports:
+      - "6379:6379"
+  
+  alcohol-world-database:
+    container_name: alcohol-world-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: do0134/alcohol-world-database
+    environment:
+      MYSQL_ROOT_PASSWORD: Dndudxor123;
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    ports:
+      - "3307:3306"
