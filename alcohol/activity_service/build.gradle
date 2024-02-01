@@ -1,0 +1,13 @@
+plugins {
+}
+
+
+dependencies {
+    implementation project(":user_service")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register("prepareKotlinBuildScriptModel"){}
