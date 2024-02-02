@@ -46,10 +46,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers("/api/v1/auth/signup").permitAll()
                             .requestMatchers("/api/v1/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
+                            .requestMatchers("/v2/api-docs").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN");
-                    authorize.anyRequest().authenticated();
+                    authorize.anyRequest().permitAll();
                 })
                 .exceptionHandling(exceptionHandler -> exceptionHandler
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
