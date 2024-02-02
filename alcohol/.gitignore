@@ -44,4 +44,4 @@ bin/
 .idea
 application.yml
 alcohol.iml
-
+/resources/
