@@ -18,8 +18,8 @@ public class Response <T>{
         return new Response<T>("SUCCESS", result);
     }
 
-    public static Response<Void> error(String resultCode) {
-        return new Response<>(resultCode, null);
+    public static Response<String> error(String resultCode, String result) {
+        return new Response<>(resultCode, result);
     }
 
     public String toStream() {
