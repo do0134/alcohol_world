@@ -2,7 +2,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(":user_service")
+    implementation project(":common")
 }
 
 tasks.named('test') {
