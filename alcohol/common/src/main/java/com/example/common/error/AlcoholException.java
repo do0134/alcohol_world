@@ -11,8 +11,9 @@ public class AlcoholException extends RuntimeException{
 
     public AlcoholException(ErrorCode errorCode) {
         this.errorCode = errorCode;
-        this.message = null;
+        this.message = errorCode.getMessage();
     }
+
     @Override
     public String getMessage(){
         if (message == null) {
