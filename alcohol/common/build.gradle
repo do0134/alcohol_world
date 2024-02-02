@@ -1,17 +1,22 @@
 plugins {
+
 }
 
 dependencies {
-    // jwt
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    api group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    // redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    runtimeOnly 'com.mysql:mysql-connector-j'
 }
+
+tasks.named('bootJar'){ // bootJar 세팅을 켜기
+    enabled = true
+}
+
+tasks.named('jar'){ // jar 설정은 끄기
+    enabled = false
+}
+
 
 tasks.named('test') {
     useJUnitPlatform()

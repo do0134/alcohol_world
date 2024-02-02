@@ -3,12 +3,6 @@ plugins {
 
 dependencies {
     implementation project(":common")
-
-    // jwt
-    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
 }
 
 tasks.named('test') {
@@ -16,3 +10,11 @@ tasks.named('test') {
 }
 
 tasks.register("prepareKotlinBuildScriptModel"){}
+
+tasks.named('bootJar'){ // bootJar 세팅을 켜기
+    enabled = true
+}
+
+tasks.named('jar'){ // jar 설정은 끄기
+    enabled = false
+}
