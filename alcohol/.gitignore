@@ -42,4 +42,6 @@ bin/
 .DS_Store
 
 .idea
+application.yml
+alcohol.iml
 
