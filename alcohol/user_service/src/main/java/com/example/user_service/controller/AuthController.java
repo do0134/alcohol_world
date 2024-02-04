@@ -1,11 +1,11 @@
 package com.example.user_service.controller;
 
 import com.example.common.response.Response;
-import com.example.user_service.controller.request.LoginRequest;
-import com.example.user_service.controller.request.LogoutRequest;
-import com.example.user_service.controller.request.UserJoinRequest;
-import com.example.user_service.controller.response.LoginResponse;
-import com.example.user_service.controller.response.UserJoinResponse;
+import com.example.user_service.model.dto.request.LoginRequest;
+import com.example.user_service.model.dto.request.LogoutRequest;
+import com.example.user_service.model.dto.request.UserJoinRequest;
+import com.example.user_service.model.dto.response.LoginResponse;
+import com.example.user_service.model.dto.response.UserJoinResponse;
 import com.example.user_service.model.dto.User;
 import com.example.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;

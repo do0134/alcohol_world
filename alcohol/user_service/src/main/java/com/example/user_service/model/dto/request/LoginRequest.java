@@ -1,4 +1,4 @@
-package com.example.user_service.controller.request;
+package com.example.user_service.model.dto.request;
 
 
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package com.example.user_service.model.entity;
 
-
 import com.example.user_service.model.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+
 
 @Entity
 @Table(name = "User")
@@ -40,22 +40,9 @@ public class UserEntity {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-
-//    @OneToMany(mappedBy = "follower")
-//    private List<FollowEntity> followerList;
-//
-//    @OneToMany(mappedBy = "following")
-//    private List<FollowEntity> followingList;
-
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.CUSTOMER;
-
-//    @OneToMany(mappedBy = "user")
-//    private List<PostEntity> postList;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<CommentEntity> commentList;
 
     @PrePersist
     void createdAt() {
