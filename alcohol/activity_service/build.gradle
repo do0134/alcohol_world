@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation project(":common")
+    implementation project(path: ':user_service')
 }
 
 tasks.named('test') {
