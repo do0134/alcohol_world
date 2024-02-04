@@ -3,7 +3,6 @@ plugins {
 
 dependencies {
     implementation project(":common")
-    implementation project(path: ':activity_service')
 }
 
 tasks.named('test') {
