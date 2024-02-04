@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "comment")
@@ -27,6 +28,10 @@ public class CommentEntity {
     @ManyToOne()
     @JoinColumn(name = "post_id")
     private PostEntity post;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentLikeEntity> commentLikeEntityList;
+
 
     @Column(name = "created_at")
     private Timestamp createdAt;

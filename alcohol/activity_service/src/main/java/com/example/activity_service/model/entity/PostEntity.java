@@ -31,9 +31,9 @@ public class PostEntity {
 
     @OneToMany(mappedBy = "post")
     private List<CommentEntity> commentList;
-//
-//    @OneToMany(mappedBy = "post")
-//    private List<PostLikeEntity> postLikeList;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostLikeEntity> postLikeList;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

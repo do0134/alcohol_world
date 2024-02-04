@@ -1,7 +1,7 @@
 package com.example.user_service.model.entity;
 
-
-import com.example.activity_service.model.entity.PostEntity;
+import com.example.activity_service.model.entity.ActivityEntity;
+import com.example.activity_service.model.entity.FollowEntity;
 import com.example.user_service.model.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,21 +43,18 @@ public class UserEntity {
     private Timestamp updatedAt;
 
 
-//    @OneToMany(mappedBy = "follower")
-//    private List<FollowEntity> followerList;
-//
-//    @OneToMany(mappedBy = "following")
-//    private List<FollowEntity> followingList;
+    @OneToMany(mappedBy = "following")
+    private List<FollowEntity> followerList;
+
+    @OneToMany(mappedBy = "follower")
+    private List<FollowEntity> followingList;
 
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.CUSTOMER;
 
     @OneToMany(mappedBy = "user")
-    private List<PostEntity> postList;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<CommentEntity> commentList;
+    private List<ActivityEntity> activityEntity;
 
     @PrePersist
     void createdAt() {
