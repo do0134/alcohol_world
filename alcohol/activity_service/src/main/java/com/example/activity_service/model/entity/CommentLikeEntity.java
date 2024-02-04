@@ -31,4 +31,11 @@ public class CommentLikeEntity {
     void createdAt() {
         this.createdAt = Timestamp.from(Instant.now());
     }
+
+    public static CommentLikeEntity toEntity(UserEntity user, CommentEntity comment) {
+        CommentLikeEntity commentLikeEntity = new CommentLikeEntity();
+        commentLikeEntity.setUser(user);
+        commentLikeEntity.setComment(comment);
+        return commentLikeEntity;
+    }
 }

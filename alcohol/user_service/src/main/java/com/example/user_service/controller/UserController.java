@@ -1,9 +1,9 @@
 package com.example.user_service.controller;
 
 import com.example.common.response.Response;
-import com.example.user_service.controller.request.PasswordRequest;
-import com.example.user_service.controller.request.UserModifyRequest;
-import com.example.user_service.controller.response.UserProfileResponse;
+import com.example.user_service.model.dto.request.PasswordRequest;
+import com.example.user_service.model.dto.request.UserModifyRequest;
+import com.example.user_service.model.dto.response.UserProfileResponse;
 import com.example.user_service.model.dto.User;
 import com.example.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;

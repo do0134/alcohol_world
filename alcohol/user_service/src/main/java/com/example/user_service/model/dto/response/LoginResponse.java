@@ -1,4 +1,4 @@
-package com.example.user_service.controller.response;
+package com.example.user_service.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
