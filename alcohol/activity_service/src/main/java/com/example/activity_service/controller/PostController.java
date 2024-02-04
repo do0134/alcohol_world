@@ -17,12 +17,6 @@ public class PostController {
     private final PostService postService;
     private final LikeService likeService;
 
-//    @GetMapping("/")
-//    public Response<NewsFeedResponse> getPosts(@AuthenticationPrincipal User user) {
-//        List<Activate> newsFeed = postService.getNewsFeed(user.getUserEmail());
-//        return Response.success(new NewsFeedResponse(newsFeed));
-//    }
-
     @GetMapping("/{postPk}")
     public Response<PostResponse> getPost(@PathVariable("postPk") Long postId) {
         PostResponse post = postService.getPost(postId);
