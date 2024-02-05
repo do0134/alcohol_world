@@ -1,5 +1,6 @@
-package com.example.common.error;
+package com.example.activity_service.utils.config;
 
+import com.example.common.error.AlcoholException;
 import com.example.common.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

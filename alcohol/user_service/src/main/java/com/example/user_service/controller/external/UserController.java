@@ -1,4 +1,4 @@
-package com.example.user_service.controller;
+package com.example.user_service.controller.external;
 
 import com.example.common.response.Response;
 import com.example.user_service.model.dto.request.PasswordRequest;

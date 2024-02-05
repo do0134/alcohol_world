@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -23,4 +24,9 @@ public class CommentService {
         CommentEntity commentEntity = commentRepository.save(CommentEntity.toEntity(content,userId,post));
         activityService.saveCommentActivity(commentEntity, userId);
     }
+
+//    public List<Comment> getComments(Long userId, Long postId) {
+//        PostEntity post = postRepository.findById(postId).orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "게시글이 존재하지 않습니다."));
+//
+//    }
 }

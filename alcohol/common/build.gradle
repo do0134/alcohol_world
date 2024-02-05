@@ -9,7 +9,7 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
     // feign client
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
+    api 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
 
     // restdocs
     testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')

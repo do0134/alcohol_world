@@ -1,4 +1,4 @@
-package com.example.activity_service.controller;
+package com.example.activity_service.controller.external;
 
 import com.example.activity_service.model.dto.request.PostRequest;
 import com.example.activity_service.model.dto.response.PostResponse;
@@ -21,8 +21,8 @@ public class PostController {
         return Response.success(post);
     }
 
-    @PostMapping("/")
-    public Response<Void> createPost(Long userId, @RequestBody PostRequest postRequest) {
+    @PostMapping("/{userId}")
+    public Response<Void> createPost(@PathVariable("userId") Long userId, @RequestBody PostRequest postRequest) {
         postService.createPost(userId,postRequest.getTitle(), postRequest.getContent());
         return Response.success();
     }

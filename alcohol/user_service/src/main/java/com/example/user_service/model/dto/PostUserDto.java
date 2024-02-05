@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostUserDto {
-    private Long id;
+    private String userEmail;
     private String nickname;
     private String userImage;
 
     public static PostUserDto fromEntity(UserEntity userEntity) {
         return new PostUserDto(
-                userEntity.getId(),
+                userEntity.getUserEmail(),
                 userEntity.getNickname(),
                 userEntity.getUserImage()
         );

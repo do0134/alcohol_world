@@ -1,9 +1,9 @@
 package com.example.user_service.service;
 
 
-import com.example.common.config.RedisConfig;
 import com.example.common.error.AlcoholException;
 import com.example.common.error.ErrorCode;
+import com.example.user_service.model.dto.PostUserDto;
 import com.example.user_service.model.dto.User;
 import com.example.user_service.model.entity.UserEntity;
 import com.example.user_service.repository.UserRepository;
@@ -17,7 +17,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.common.config.RedisConfig.*;
 
 import java.util.Optional;
 import java.util.Set;
@@ -177,5 +176,10 @@ public class UserService {
 
     public String getRedisKey(String userEmail, String deviceId) {
         return "JWT_USER: " + userEmail + "DEVICE: " + deviceId;
+    }
+
+    public PostUserDto getPostUser(Long userId) {
+        PostUserDto postUserDto = PostUserDto.fromEntity(userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND)));
+        return postUserDto;
     }
 }

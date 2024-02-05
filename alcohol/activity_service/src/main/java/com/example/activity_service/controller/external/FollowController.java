@@ -1,10 +1,8 @@
-package com.example.activity_service.controller;
+package com.example.activity_service.controller.external;
 
 import com.example.activity_service.service.FollowService;
 import com.example.common.response.Response;
-import com.example.user_service.model.dto.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class FollowController {
     private final FollowService followService;
 
-    @PostMapping("/{followerId}")
-    public Response<Void> follow(@AuthenticationPrincipal User user, @PathVariable("followerId") Long followerId) {
-        followService.userFollow(user.getUserEmail(), followerId);
+    @PostMapping("/{followerId}/{followingId}")
+    public Response<Void> follow(@PathVariable("followerId") Long followerId, @PathVariable("followingId") Long followingId) {
+        followService.userFollow(followerId, followingId);
         return Response.success();
     }
 }
