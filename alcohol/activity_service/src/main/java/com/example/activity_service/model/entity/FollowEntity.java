@@ -1,6 +1,5 @@
 package com.example.activity_service.model.entity;
 
-import com.example.user_service.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,13 +18,11 @@ public class FollowEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private UserEntity follower;
+    @Column(name = "follower_id")
+    private Long follower;
 
-    @ManyToOne
-    @JoinColumn(name = "following_id")
-    private UserEntity following;
+    @Column(name = "following_id")
+    private Long following;
 
     private Timestamp createdAt;
 
@@ -34,7 +31,7 @@ public class FollowEntity {
         this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public static FollowEntity toEntity(UserEntity follower, UserEntity following) {
+    public static FollowEntity toEntity(Long follower, Long following) {
         FollowEntity followEntity = new FollowEntity();
         followEntity.setFollower(follower);
         followEntity.setFollowing(following);

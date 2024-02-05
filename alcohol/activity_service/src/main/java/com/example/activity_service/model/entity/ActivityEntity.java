@@ -1,7 +1,6 @@
 package com.example.activity_service.model.entity;
 
 import com.example.activity_service.model.ActivityType;
-import com.example.user_service.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +14,8 @@ public class ActivityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "activity_type")
     @Enumerated(EnumType.STRING)
@@ -43,36 +41,41 @@ public class ActivityEntity {
     @JoinColumn(name = "follow_id")
     private FollowEntity follow;
 
-    public static ActivityEntity toEntity(ActivityType activityType, PostEntity post) {
+    public static ActivityEntity toEntity(ActivityType activityType, PostEntity post, Long userId) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setPost(post);
         return activityEntity;
     }
 
-    public static ActivityEntity toEntity(ActivityType activityType, PostLikeEntity postLike) {
+    public static ActivityEntity toEntity(ActivityType activityType, PostLikeEntity postLike, Long userId) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setPostLikeEntity(postLike);
         return activityEntity;
     }
 
-    public static ActivityEntity toEntity(ActivityType activityType, CommentEntity comment) {
+    public static ActivityEntity toEntity(ActivityType activityType, CommentEntity comment, Long userId) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setComment(comment);
         return activityEntity;
     }
 
-    public static ActivityEntity toEntity(ActivityType activityType, CommentLikeEntity commentLike) {
+    public static ActivityEntity toEntity(ActivityType activityType, CommentLikeEntity commentLike, Long userId) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setCommentLikeEntity(commentLike);
         return activityEntity;
     }
 
-    public static ActivityEntity toEntity(ActivityType activityType, FollowEntity follow) {
+    public static ActivityEntity toEntity(ActivityType activityType, FollowEntity follow, Long userId) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setFollow(follow);
         return activityEntity;

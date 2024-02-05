@@ -1,6 +1,5 @@
 package com.example.activity_service.model.entity;
 
-import com.example.user_service.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +16,8 @@ public class CommentLikeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -32,9 +30,9 @@ public class CommentLikeEntity {
         this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public static CommentLikeEntity toEntity(UserEntity user, CommentEntity comment) {
+    public static CommentLikeEntity toEntity(Long userId, CommentEntity comment) {
         CommentLikeEntity commentLikeEntity = new CommentLikeEntity();
-        commentLikeEntity.setUser(user);
+        commentLikeEntity.setUserId(userId);
         commentLikeEntity.setComment(comment);
         return commentLikeEntity;
     }

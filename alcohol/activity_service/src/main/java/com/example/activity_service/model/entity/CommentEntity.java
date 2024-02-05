@@ -1,6 +1,5 @@
 package com.example.activity_service.model.entity;
 
-import com.example.user_service.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +20,10 @@ public class CommentEntity {
     @Column(name = "content")
     private String content;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private PostEntity post;
 
@@ -49,10 +47,10 @@ public class CommentEntity {
         this.updatedAt = Timestamp.from(Instant.now());
     }
 
-    public static CommentEntity toEntity(String content, UserEntity user, PostEntity post) {
+    public static CommentEntity toEntity(String content, Long userId, PostEntity post) {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setContent(content);
-        commentEntity.setUser(user);
+        commentEntity.setUserId(userId);
         commentEntity.setPost(post);
         return commentEntity;
     }
