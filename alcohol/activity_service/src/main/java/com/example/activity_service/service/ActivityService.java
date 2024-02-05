@@ -18,22 +18,22 @@ public class ActivityService {
     }
 
     @Transactional
-    public void savePostActivity(PostEntity postEntity) {
-        activityRepository.save(ActivityEntity.toEntity(ActivityType.POST, postEntity));
+    public void savePostActivity(PostEntity postEntity, Long userId) {
+        activityRepository.save(ActivityEntity.toEntity(ActivityType.POST, postEntity, userId));
     }
 
     @Transactional
-    public void savePostLikeActivity(PostLikeEntity postLikeEntity) {
-        activityRepository.save(ActivityEntity.toEntity(ActivityType.POST_LIKE, postLikeEntity));
+    public void savePostLikeActivity(PostLikeEntity postLikeEntity, Long userId) {
+        activityRepository.save(ActivityEntity.toEntity(ActivityType.POST_LIKE, postLikeEntity, userId));
     }
 
     @Transactional
-    public void saveCommentActivity(CommentEntity commentEntity) {
-        activityRepository.save(ActivityEntity.toEntity(ActivityType.COMMENT, commentEntity));
+    public void saveCommentActivity(CommentEntity commentEntity, Long userId) {
+        activityRepository.save(ActivityEntity.toEntity(ActivityType.COMMENT, commentEntity, userId));
     }
 
     @Transactional
-    public void saveCommentLikeActivity(CommentLikeEntity commentLikeEntity) {
-        activityRepository.save(ActivityEntity.toEntity(ActivityType.COMMENT_LIKE, commentLikeEntity));
+    public void saveCommentLikeActivity(CommentLikeEntity commentLikeEntity, Long userId) {
+        activityRepository.save(ActivityEntity.toEntity(ActivityType.COMMENT_LIKE, commentLikeEntity, userId));
     }
 }

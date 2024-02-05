@@ -10,8 +10,6 @@ import com.example.activity_service.repository.PostLikeRepository;
 import com.example.activity_service.repository.PostRepository;
 import com.example.common.error.AlcoholException;
 import com.example.common.error.ErrorCode;
-import com.example.user_service.model.entity.UserEntity;
-import com.example.user_service.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,34 +22,32 @@ public class LikeService {
 
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
-    private final UserRepository userRepository;
 
     private final ActivityService activityService;
 
     @Transactional
-    public void postLike(String userEmail, Long postId) {
+    public void postLike(Long userId, Long postId) {
         // TODO: 바로 userId를 받을 수 있는 지 확인해서 코드 줄이기
-        UserEntity user =  userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자가 존재하지 않습니다."));
         PostEntity post = postRepository.findById(postId).orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "게시글이 존재하지 않습니다."));
 
-        if (postLikeRepository.findByUserAndPost(user, post).isPresent()){
+        if (postLikeRepository.findByUserAndPost(userId, post).isPresent()){
             throw new AlcoholException(ErrorCode.ALREADY_LIKE, "이미 좋아요 누른 게시물입니다");
         }
 
-        PostLikeEntity postLikeEntity = postLikeRepository.save(PostLikeEntity.toEntity(user, post));
-        activityService.savePostLikeActivity(postLikeEntity);
+        PostLikeEntity postLikeEntity = postLikeRepository.save(PostLikeEntity.toEntity(userId, post));
+        activityService.savePostLikeActivity(postLikeEntity, userId);
     }
 
     @Transactional
-    public void commentLike(String userEmail, Long commentId) {
-        UserEntity user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND, "사용자가 존재하지 않습니다."));
+    public void commentLike(Long userId, Long commentId) {
+
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "게시글이 존재하지 않습니다."));
 
-        if (commentLikeRepository.findByUserAndComment(user, comment).isPresent()){
+        if (commentLikeRepository.findByUserAndComment(userId, comment).isPresent()){
             throw new AlcoholException(ErrorCode.ALREADY_LIKE, "이미 좋아요 눌렀습니다.");
         }
 
-        CommentLikeEntity commentLikeEntity = commentLikeRepository.save(CommentLikeEntity.toEntity(user, comment));
-        activityService.saveCommentLikeActivity(commentLikeEntity);
+        CommentLikeEntity commentLikeEntity = commentLikeRepository.save(CommentLikeEntity.toEntity(userId, comment));
+        activityService.saveCommentLikeActivity(commentLikeEntity, userId);
     }
 }
