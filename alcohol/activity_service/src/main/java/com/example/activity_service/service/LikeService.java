@@ -27,10 +27,9 @@ public class LikeService {
 
     @Transactional
     public void postLike(Long userId, Long postId) {
-        // TODO: 바로 userId를 받을 수 있는 지 확인해서 코드 줄이기
         PostEntity post = postRepository.findById(postId).orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "게시글이 존재하지 않습니다."));
 
-        if (postLikeRepository.findByUserAndPost(userId, post).isPresent()){
+        if (postLikeRepository.findByUserIdAndPost(userId, post).isPresent()){
             throw new AlcoholException(ErrorCode.ALREADY_LIKE, "이미 좋아요 누른 게시물입니다");
         }
 
@@ -43,7 +42,7 @@ public class LikeService {
 
         CommentEntity comment = commentRepository.findById(commentId).orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "게시글이 존재하지 않습니다."));
 
-        if (commentLikeRepository.findByUserAndComment(userId, comment).isPresent()){
+        if (commentLikeRepository.findByUserIdAndComment(userId, comment).isPresent()){
             throw new AlcoholException(ErrorCode.ALREADY_LIKE, "이미 좋아요 눌렀습니다.");
         }
 

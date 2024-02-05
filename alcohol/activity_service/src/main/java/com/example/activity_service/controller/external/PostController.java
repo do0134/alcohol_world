@@ -1,4 +1,4 @@
-package com.example.activity_service.controller;
+package com.example.activity_service.controller.external;
 
 import com.example.activity_service.model.dto.request.PostRequest;
 import com.example.activity_service.model.dto.response.PostResponse;

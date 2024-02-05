@@ -1,7 +1,6 @@
 package com.example.activity_service.model.dto;
 
 import com.example.activity_service.model.entity.CommentEntity;
-import com.example.user_service.model.dto.PostUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -13,12 +12,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class Comment {
     private String content;
-    private PostUserDto user;
+    private PostUserDto postUser;
 
-    public static Comment fromEntity(CommentEntity commentEntity) {
+    public static Comment fromEntityAndFeign(CommentEntity commentEntity, PostUserDto postUser) {
+
         return new Comment(
                 commentEntity.getContent(),
-                PostUserDto.fromEntity(commentEntity.getUser())
+                postUser
         );
     }
 }
