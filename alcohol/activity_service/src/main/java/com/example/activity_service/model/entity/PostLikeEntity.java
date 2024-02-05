@@ -1,7 +1,6 @@
 package com.example.activity_service.model.entity;
 
 
-import com.example.user_service.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +20,8 @@ public class PostLikeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -37,9 +35,9 @@ public class PostLikeEntity {
         this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public static PostLikeEntity toEntity(UserEntity user, PostEntity post) {
+    public static PostLikeEntity toEntity(Long userId, PostEntity post) {
         PostLikeEntity postLikeEntity = new PostLikeEntity();
-        postLikeEntity.setUser(user);
+        postLikeEntity.setUserId(userId);
         postLikeEntity.setPost(post);
         return postLikeEntity;
     }
