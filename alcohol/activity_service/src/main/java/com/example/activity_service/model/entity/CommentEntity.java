@@ -1,6 +1,7 @@
 package com.example.activity_service.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +19,11 @@ public class CommentEntity {
     private Long id;
 
     @Column(name = "content")
+    @NotNull
     private String content;
 
     @Column(name = "user_id")
+    @NotNull
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -2,6 +2,7 @@ package com.example.activity_service.model.entity;
 
 import com.example.activity_service.model.ActivityType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +16,12 @@ public class ActivityEntity {
     private Long id;
 
     @Column(name = "user_id")
+    @NotNull
     private Long userId;
 
     @Column(name = "activity_type")
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ActivityType activityType;
 
     @OneToOne
@@ -75,6 +78,7 @@ public class ActivityEntity {
 
     public static ActivityEntity toEntity(ActivityType activityType, FollowEntity follow) {
         ActivityEntity activityEntity = new ActivityEntity();
+        activityEntity.setUserId(follow.getFollower());
         activityEntity.setActivityType(activityType);
         activityEntity.setFollow(follow);
         return activityEntity;
