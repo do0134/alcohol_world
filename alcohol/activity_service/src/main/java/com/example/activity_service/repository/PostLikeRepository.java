@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLikeEntity, Long> {
-    Optional<PostLikeEntity> findByUserAndPost(UserEntity user, PostEntity post);
+    Optional<PostLikeEntity> findByUserAndPost(Long user, PostEntity post);
 
     Long countByPost(PostEntity post);
 
