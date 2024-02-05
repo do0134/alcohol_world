@@ -19,14 +19,14 @@ public class FollowService {
     @Transactional
     public void userFollow(Long followerId, Long followingId) {
         if (followerId.equals(followingId)) {
-            throw new AlcoholException(ErrorCode.ALREADY_FOLLOW, "스스로를 팔로우할 수 없습니다.");
+            throw new AlcoholException(ErrorCode.ALREADY_FOLLOW);
         }
 
 
         Optional<FollowEntity> ifFollow = followRepository.findByFollowerAndFollowing(followerId, followingId);
 
         if (ifFollow.isPresent()) {
-            throw new AlcoholException(ErrorCode.ALREADY_FOLLOW, String.format("%s를 이미 팔로우 했습니다.", followingId));
+            throw new AlcoholException(ErrorCode.ALREADY_FOLLOW);
         }
 
         FollowEntity followEntity = followRepository.save(FollowEntity.toEntity(followerId, followingId));

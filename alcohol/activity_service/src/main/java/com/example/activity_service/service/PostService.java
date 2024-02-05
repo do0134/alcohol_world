@@ -33,11 +33,12 @@ public class PostService {
 
     public PostResponse getPost(Long postId) {
         PostEntity postEntity = postRepository.findById(postId). orElseThrow(() -> new AlcoholException(ErrorCode.POST_NOT_FOUND, "포스트가 없습니다."));
-        Post post = Post.fromEntityAndFeign(postEntity, activityUserClient.getUser(postEntity.getUserId()));
+        PostUserDto postUser = activityService.getUser(postEntity.getUserId());
+        Post post = Post.fromEntityAndFeign(postEntity, postUser);
         List<Comment> commentList = new ArrayList<>();
 
         for (CommentEntity comment: postEntity.getCommentList()) {
-            PostUserDto postUserDto = activityUserClient.getUser(comment.getUserId());
+            PostUserDto postUserDto = activityUserClient.getUser(comment.getUserId()).getResult();
             Comment commentDto = Comment.fromEntityAndFeign(comment, postUserDto);
             commentList.add(commentDto);
         }

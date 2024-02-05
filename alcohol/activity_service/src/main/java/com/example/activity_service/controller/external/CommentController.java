@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/{postId}")
-    public Response<Void> createComment(Long userId, @PathVariable("postId") Long postId, @RequestBody CommentRequest commentRequest) {
+    @PostMapping("/{postId}/{userId}")
+    public Response<Void> createComment(@PathVariable("postId") Long postId, @PathVariable("userId") Long userId, @RequestBody CommentRequest commentRequest) {
         commentService.createComment(userId, postId, commentRequest.getContent());
         return Response.success();
     }
