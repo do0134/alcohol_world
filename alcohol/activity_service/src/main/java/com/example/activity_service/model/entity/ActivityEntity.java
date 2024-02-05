@@ -73,9 +73,8 @@ public class ActivityEntity {
         return activityEntity;
     }
 
-    public static ActivityEntity toEntity(ActivityType activityType, FollowEntity follow, Long userId) {
+    public static ActivityEntity toEntity(ActivityType activityType, FollowEntity follow) {
         ActivityEntity activityEntity = new ActivityEntity();
-        activityEntity.setUserId(userId);
         activityEntity.setActivityType(activityType);
         activityEntity.setFollow(follow);
         return activityEntity;
