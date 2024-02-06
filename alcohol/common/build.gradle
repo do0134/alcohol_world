@@ -3,11 +3,6 @@ plugins {
 }
 
 dependencies {
-    // jwt
-    api group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
     // feign client
     api 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
 

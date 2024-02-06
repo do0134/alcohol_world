@@ -22,12 +22,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     public Response<UserJoinResponse> signup(@ModelAttribute UserJoinRequest userJoinRequest) {
+        System.out.println("say hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         User user = userService.signup(userJoinRequest.getUserEmail(),userJoinRequest.getPassword(),userJoinRequest.getNickname(),userJoinRequest.getStatement(),userJoinRequest.getUserImage());
         return Response.success(UserJoinResponse.fromUser(user));
     }
 
     @PostMapping("/login")
     public Response<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("say hello!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         String token = userService.userLogin(loginRequest.getUserEmail(), loginRequest.getPassword(), loginRequest.getDeviceId());
 
         return Response.success(new LoginResponse(token));
