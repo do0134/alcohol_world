@@ -22,6 +22,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public Response<UserJoinResponse> signup(@ModelAttribute UserJoinRequest userJoinRequest) {
+        System.out.println("say hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         User user = userService.signup(userJoinRequest.getUserEmail(),userJoinRequest.getPassword(),userJoinRequest.getNickname(),userJoinRequest.getStatement(),userJoinRequest.getUserImage());
         return Response.success(UserJoinResponse.fromUser(user));
     }
