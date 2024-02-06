@@ -29,7 +29,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public Response<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("say hello!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         String token = userService.userLogin(loginRequest.getUserEmail(), loginRequest.getPassword(), loginRequest.getDeviceId());
 
         return Response.success(new LoginResponse(token));

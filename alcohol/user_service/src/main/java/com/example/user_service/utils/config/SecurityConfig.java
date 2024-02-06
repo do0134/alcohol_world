@@ -3,7 +3,6 @@ package com.example.user_service.utils.config;
 import com.example.user_service.utils.filter.JwtTokenFilter;
 import com.example.user_service.service.UserService;
 import com.example.user_service.utils.error.CustomAuthenticationEntryPoint;
-import com.example.user_service.utils.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +39,6 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
-        System.out.println("ㅎㅇㅎㅇ");
         return httpSecurity
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
