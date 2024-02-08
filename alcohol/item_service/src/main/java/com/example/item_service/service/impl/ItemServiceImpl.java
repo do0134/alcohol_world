@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime) {
         Item item = getItem(itemId);
-        Optional<SalesItemEntity> salesItem = salesItemRepository.findByNameAndItemType(item.getName(), itemType);
+        Optional<SalesItemEntity> salesItem = salesItemRepository.findByItemNameAndItemType(item.getName(), itemType);
 
         if (salesItem.isPresent()) {
             throw new AlcoholException(ErrorCode.ITEM_ALREADY_EXIST);
