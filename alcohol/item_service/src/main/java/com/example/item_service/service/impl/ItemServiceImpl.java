@@ -36,22 +36,21 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item getItem(Long itemId) {
-        ItemEntity item = itemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+        ItemEntity item = getItemEntity(itemId);
 
         return Item.fromEntity(item);
     }
 
     @Override
     public void createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime) {
-        Item item = getItem(itemId);
+        ItemEntity item = getItemEntity(itemId);
         Optional<SalesItemEntity> salesItem = salesItemRepository.findByItemNameAndItemType(item.getName(), itemType);
 
         if (salesItem.isPresent()) {
-            throw new AlcoholException(ErrorCode.ITEM_ALREADY_EXIST);
+            throw new AlcoholException(ErrorCode.ITEM_ALREADY_EXIST, "존재하는 판매상품입니다.");
         }
 
-        salesItemRepository.save(SalesItemEntity.toEntity(ItemEntity.toEntity(item.getName(), item.getContent(),item.getImage()),
-                itemType,price,stock,startTime,endTime)
+        salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime)
         );
     }
 
@@ -60,5 +59,9 @@ public class ItemServiceImpl implements ItemService {
         SalesItemEntity salesItemEntity = salesItemRepository.findById(salesItemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
 
         return SalesItem.fromEntity(salesItemEntity);
+    }
+
+    public ItemEntity getItemEntity(Long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
     }
 }
