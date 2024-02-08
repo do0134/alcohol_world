@@ -12,8 +12,8 @@ import java.time.Instant;
 @Entity
 @Getter
 @Setter
-@Table(name = "order")
-@SQLDelete(sql = "UPDATE order SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
+@Table(name = "\"order\"")
+@SQLDelete(sql = "UPDATE \"order\" SET is_deleted = true, deleted_at = NOW() WHERE id = ?")
 @Where(clause = "is_deleted = False")
 public class OrderEntity {
     @Id
