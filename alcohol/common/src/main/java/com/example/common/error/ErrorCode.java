@@ -19,7 +19,10 @@ public enum ErrorCode {
     CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자신을 팔로우할 수 없습니다."),
 
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
-    ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다.");
+    ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
+
+    NO_SUCH_ITEM(HttpStatus.BAD_REQUEST, "상품을 찾을 수 없습니다."),
+    ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 상품이 존재합니다.");
 
     private final HttpStatus status;
     private final String message;
