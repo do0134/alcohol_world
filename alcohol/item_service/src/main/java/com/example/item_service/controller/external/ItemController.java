@@ -1,4 +1,5 @@
-package com.example.item_service.controller;
+package com.example.item_service.controller.external;
+
 
 import com.example.common.response.Response;
 import com.example.item_service.model.dto.Item;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/item")
 public class ItemController {
+
     private final ItemService itemService;
     @PostMapping("/")
     public Response<Void> createItem(@RequestBody Item item) {
