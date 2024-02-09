@@ -3,6 +3,7 @@ package com.example.user_service.service;
 
 import com.example.common.error.AlcoholException;
 import com.example.common.error.ErrorCode;
+import com.example.user_service.model.dto.OrderUser;
 import com.example.user_service.model.dto.PostUserDto;
 import com.example.user_service.model.dto.User;
 import com.example.user_service.model.entity.UserEntity;
@@ -182,5 +183,12 @@ public class UserService {
     public PostUserDto getPostUser(Long userId) {
         PostUserDto postUserDto = PostUserDto.fromEntity(userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND)));
         return postUserDto;
+    }
+
+    public OrderUser getOrderUser(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new AlcoholException(ErrorCode.USER_NOT_FOUND));
+        OrderUser orderUser = new OrderUser();
+        orderUser.setNickname(user.getNickname());
+        return orderUser;
     }
 }
