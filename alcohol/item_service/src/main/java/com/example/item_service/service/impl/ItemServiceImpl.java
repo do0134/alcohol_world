@@ -12,6 +12,8 @@ import com.example.item_service.repository.ItemRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +71,12 @@ public class ItemServiceImpl implements ItemService {
         orderItem.setName(salesItemEntity.getItem().getName());
         orderItem.setPrice(salesItemEntity.getPrice());
         return orderItem;
+    }
+
+    @Override
+    public Page<SalesItem>  getSalesItems(Pageable pageable, ItemType itemType) {
+        Page<SalesItemEntity> reservationItems = salesItemRepository.findAllByItemType(itemType, pageable);
+        return reservationItems.map(SalesItem::fromEntity);
     }
 
     public ItemEntity getItemEntity(Long itemId) {
