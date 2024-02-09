@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class OrderItem {
     private String name;
-
+    private Long price;
 }
