@@ -4,6 +4,7 @@ import com.example.common.error.AlcoholException;
 import com.example.common.error.ErrorCode;
 import com.example.item_service.model.ItemType;
 import com.example.item_service.model.dto.Item;
+import com.example.item_service.model.dto.OrderItem;
 import com.example.item_service.model.dto.SalesItem;
 import com.example.item_service.model.entity.ItemEntity;
 import com.example.item_service.model.entity.SalesItemEntity;
@@ -59,6 +60,15 @@ public class ItemServiceImpl implements ItemService {
         SalesItemEntity salesItemEntity = salesItemRepository.findById(salesItemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
 
         return SalesItem.fromEntity(salesItemEntity);
+    }
+
+    @Override
+    public OrderItem getOrderItem(Long salesItemId) {
+        SalesItemEntity salesItemEntity = salesItemRepository.findById(salesItemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+        OrderItem orderItem = new OrderItem();
+        orderItem.setName(salesItemEntity.getItem().getName());
+        orderItem.setPrice(salesItemEntity.getPrice());
+        return orderItem;
     }
 
     public ItemEntity getItemEntity(Long itemId) {

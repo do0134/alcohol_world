@@ -22,7 +22,9 @@ public enum ErrorCode {
     ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
 
     NO_SUCH_ITEM(HttpStatus.BAD_REQUEST, "상품을 찾을 수 없습니다."),
-    ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 상품이 존재합니다.");
+    ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 상품이 존재합니다."),
+
+    NO_SUCH_ORDER(HttpStatus.BAD_REQUEST, "주문을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;

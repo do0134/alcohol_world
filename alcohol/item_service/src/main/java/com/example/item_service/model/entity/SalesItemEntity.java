@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 @Entity
-@Table(name = "SalesItem")
+@Table(name = "SalesItems")
 @Getter
 @Setter
 public class SalesItemEntity {

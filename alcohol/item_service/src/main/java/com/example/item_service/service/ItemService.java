@@ -3,6 +3,7 @@ package com.example.item_service.service;
 
 import com.example.item_service.model.ItemType;
 import com.example.item_service.model.dto.Item;
+import com.example.item_service.model.dto.OrderItem;
 import com.example.item_service.model.dto.SalesItem;
 
 import java.sql.Timestamp;
@@ -14,4 +15,6 @@ public interface ItemService {
     void createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime);
 
     SalesItem getSalesItem(Long salesItemId);
+
+    OrderItem getOrderItem(Long salesItemId);
 }
