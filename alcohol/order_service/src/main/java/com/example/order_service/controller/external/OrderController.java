@@ -32,4 +32,9 @@ public class OrderController {
         Order order = orderService.getOrder(orderId);
         return Response.success(order);
     }
+
+    @PostMapping("/{orderId}")
+    public Response<Void> doPay(@PathVariable("orderId") Long orderId) {
+        return Response.success();
+    }
 }
