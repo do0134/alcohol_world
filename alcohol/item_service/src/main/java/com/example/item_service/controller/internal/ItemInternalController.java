@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ItemInternalController {
     private final ItemService itemService;
 
-    @GetMapping("/{itemId}")
+    @GetMapping("/order/{itemId}")
     public Response<OrderItem> getOrderItem(@PathVariable("itemId") Long itemId) {
         OrderItem orderItem = itemService.getOrderItem(itemId);
         return Response.success(orderItem);
