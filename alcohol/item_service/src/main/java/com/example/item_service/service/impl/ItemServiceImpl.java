@@ -9,6 +9,7 @@ import com.example.item_service.model.dto.SalesItem;
 import com.example.item_service.model.entity.ItemEntity;
 import com.example.item_service.model.entity.SalesItemEntity;
 import com.example.item_service.repository.ItemRepository;
+import com.example.item_service.repository.PayRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final SalesItemRepository salesItemRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final PayRepository payRepository;
 
     @Override
     @Transactional
@@ -51,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime) {
         ItemEntity item = getItemEntity(itemId);
         Optional<SalesItemEntity> salesItem = salesItemRepository.findByItemNameAndItemType(item.getName(), itemType);
@@ -83,6 +86,30 @@ public class ItemServiceImpl implements ItemService {
     public Page<SalesItem>  getSalesItems(Pageable pageable, ItemType itemType) {
         Page<SalesItemEntity> reservationItems = salesItemRepository.findAllByItemType(itemType, pageable);
         return reservationItems.map(SalesItem::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public void pay(Long userId, Long itemId) {
+        SalesItemEntity item = salesItemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+
+        double randomNumber = Math.random();
+
+        // 실패할 확률을 20%로 설정
+        double failureProbability = 0.2;
+
+        // 실패 여부를 결정
+        boolean isFailed = randomNumber < failureProbability;
+
+        if (!isFailed) {
+            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, String.format("%s님의 결제가 알 수 없는 이유로 실패했습니다.",userId));
+        }
+
+        if (item.getStock() < 1) {
+            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
+        }
+
+        payRepository.update(userId, itemId);
     }
 
     public ItemEntity getItemEntity(Long itemId) {
