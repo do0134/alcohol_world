@@ -12,8 +12,12 @@ import com.example.item_service.repository.ItemRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.StreamRecords;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +25,12 @@ import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final SalesItemRepository salesItemRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional
@@ -53,8 +59,8 @@ public class ItemServiceImpl implements ItemService {
             throw new AlcoholException(ErrorCode.ITEM_ALREADY_EXIST, "존재하는 판매상품입니다.");
         }
 
-        salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime)
-        );
+        salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime));
+//        publishSalesItemQuantity(itemId, stock);
     }
 
     @Override
@@ -81,5 +87,18 @@ public class ItemServiceImpl implements ItemService {
 
     public ItemEntity getItemEntity(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+    }
+
+    public void publishSalesItemQuantity(Long itemId, Long stock){
+        ObjectRecord<String, Long> record = StreamRecords.newRecord()
+                .ofObject(stock)
+                .withStreamKey(getRedisKey(itemId));
+        redisTemplate.opsForStream().add(record);
+        log.info(String.format("%s stream is publishing", getRedisKey(itemId)));
+    }
+
+    public String getRedisKey(Long itemId) {
+        String redisKey = "SalesItem";
+        return redisKey + " " + itemId;
     }
 }
