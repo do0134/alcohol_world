@@ -94,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
                 .ofObject(stock)
                 .withStreamKey(getRedisKey(itemId));
         redisTemplate.opsForStream().add(record);
-        log.info(String.format("%s stream is publishing", getRedisKey(itemId)));
+        log.info(String.format(String.format("Stream for item %s has started. Initial inventory is %d.", itemId, stock)));
     }
 
     public String getRedisKey(Long itemId) {
