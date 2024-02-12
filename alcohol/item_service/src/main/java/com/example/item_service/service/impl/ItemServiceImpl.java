@@ -12,10 +12,12 @@ import com.example.item_service.repository.ItemRepository;
 import com.example.item_service.repository.PayRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,20 +92,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public void pay(Long userId, Long itemId) {
         SalesItemEntity item = salesItemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
-
-        double randomNumber = Math.random();
-
-        // 실패할 확률을 20%로 설정
-        double failureProbability = 0.2;
-
-        // 실패 여부를 결정
-        boolean isFailed = randomNumber < failureProbability;
-
-        if (!isFailed) {
-            throw new AlcoholException(ErrorCode.INVALID_PERMISSION, String.format("%s님의 결제가 알 수 없는 이유로 실패했습니다.",userId));
-        }
 
         if (item.getStock() < 1) {
             throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
