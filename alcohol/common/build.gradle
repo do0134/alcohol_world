@@ -22,13 +22,13 @@ bootJar {
     }
 }
 
-tasks.named('bootJar'){ // bootJar 세팅을 켜기
-    enabled = true
-}
-
-tasks.named('jar'){ // jar 설정은 끄기
-    enabled = false
-}
+//tasks.named('bootJar'){ // bootJar 세팅을 켜기
+//    enabled = true
+//}
+//
+//tasks.named('jar'){ // jar 설정은 끄기
+//    enabled = false
+//}
 
 
 tasks.named('test') {

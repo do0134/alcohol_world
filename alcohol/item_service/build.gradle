@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     implementation project(":common")
-    implementation 'org.apache.commons:commons-pool2:2.10.0' // Redis pool 의존성 추가
 }
 
 tasks.named('test') {
