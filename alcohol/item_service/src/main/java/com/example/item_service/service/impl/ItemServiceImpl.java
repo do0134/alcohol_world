@@ -12,7 +12,6 @@ import com.example.item_service.repository.ItemRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -98,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
 //            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
 //        }
 
-        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId, LockModeType.PESSIMISTIC_WRITE);
+        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
 
         if (item.getStock() < 1) {
             throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
