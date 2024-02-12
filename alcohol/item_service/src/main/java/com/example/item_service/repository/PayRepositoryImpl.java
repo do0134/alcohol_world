@@ -2,6 +2,7 @@ package com.example.item_service.repository;
 
 import com.example.item_service.model.entity.SalesItemEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,8 +16,8 @@ public class PayRepositoryImpl implements PayRepository{
 
     @Override
     @Transactional
-    public synchronized void update(Long userId, Long itemId) {
-        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
+    public void update(Long userId, Long itemId) {
+        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId, LockModeType.PESSIMISTIC_WRITE);
         item.setStock(item.getStock()-1);
         entityManager.merge(item);
         entityManager.flush();

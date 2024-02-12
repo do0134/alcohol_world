@@ -7,15 +7,16 @@ import time
 def send_http_request(url, userId, itemId):
     global my_dict, error
     try:
+        flag = False
         response = requests.put(f"{url}/{userId}/{itemId}")
-        if response.status_code == 200:
+        data = response.json()
+        result_code = data.get("resultCode")
+        if result_code == "SUCCESS":
             my_dict[itemId] += 1
         else:
             error += 1
-            print(f"error error {userId}")
 
     except Exception as e:
-        error += 1
         print(f"Error sending request to {url} with userId {userId} and itemId {itemId}: {e}")
 
 
