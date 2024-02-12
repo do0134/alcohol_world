@@ -90,12 +90,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public synchronized void pay(Long userId, Long itemId) {
-//        SalesItemEntity item = salesItemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
-//
-//        if (item.getStock() < 1) {
-//            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
-//        }
+    public void pay(Long userId, Long itemId) {
 
         SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
 
