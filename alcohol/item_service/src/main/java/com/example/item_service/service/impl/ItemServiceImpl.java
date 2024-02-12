@@ -9,9 +9,10 @@ import com.example.item_service.model.dto.SalesItem;
 import com.example.item_service.model.entity.ItemEntity;
 import com.example.item_service.model.entity.SalesItemEntity;
 import com.example.item_service.repository.ItemRepository;
-import com.example.item_service.repository.PayRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final SalesItemRepository salesItemRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    private final PayRepository payRepository;
+    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -91,13 +92,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void pay(Long userId, Long itemId) {
-        SalesItemEntity item = salesItemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+//        SalesItemEntity item = salesItemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
+//
+//        if (item.getStock() < 1) {
+//            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
+//        }
+
+        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId, LockModeType.PESSIMISTIC_WRITE);
 
         if (item.getStock() < 1) {
             throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
         }
 
-        payRepository.update(userId, itemId);
+        item.setStock(item.getStock()-1);
+        entityManager.merge(item);
     }
 
     public ItemEntity getItemEntity(Long itemId) {
