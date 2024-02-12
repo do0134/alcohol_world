@@ -19,7 +19,6 @@ public class PayRepositoryImpl implements PayRepository{
         SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
         item.setStock(item.getStock()-1);
         entityManager.merge(item);
-        entityManager.clear();
         entityManager.flush();
     }
 }

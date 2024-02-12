@@ -5,18 +5,19 @@ import time
 
 
 def send_http_request(url, userId, itemId):
-    global my_dict
+    global my_dict, error
     try:
         response = requests.put(f"{url}/{userId}/{itemId}")
         if response.status_code == 200:
             my_dict[itemId] += 1
+        else:
+            error += 1
     except Exception as e:
         print(f"Error sending request to {url} with userId {userId} and itemId {itemId}: {e}")
 
 
-
 def main():
-    global my_dict
+    global my_dict, error
     # Set the number of concurrent requests (N)
     num_requests = 10000
     my_dict = {i: 0 for i in range(1,11)}
@@ -24,7 +25,7 @@ def main():
     base_url = "http://localhost:8084/api/v1/item/pay"
 
     start_time = time.time()
-
+    error = 0
     # Create a ThreadPoolExecutor to send concurrent requests
     with ThreadPoolExecutor(max_workers=num_requests) as executor:
         # Use a list comprehension to create a list of tasks
@@ -42,6 +43,7 @@ def main():
     elapsed_time = end_time - start_time
     print(f"Elapsed time: {elapsed_time} seconds")
     print(f"item used: {my_dict}")
+    print(f"error: {error}")
 
 
 if __name__ == "__main__":
