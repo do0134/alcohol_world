@@ -12,7 +12,10 @@ def send_http_request(url, userId, itemId):
             my_dict[itemId] += 1
         else:
             error += 1
+            print(f"error error {userId}")
+
     except Exception as e:
+        error += 1
         print(f"Error sending request to {url} with userId {userId} and itemId {itemId}: {e}")
 
 

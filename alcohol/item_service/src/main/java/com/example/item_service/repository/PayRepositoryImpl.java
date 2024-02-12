@@ -15,7 +15,7 @@ public class PayRepositoryImpl implements PayRepository{
 
     @Override
     @Transactional
-    public void update(Long userId, Long itemId) {
+    public synchronized void update(Long userId, Long itemId) {
         SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
         item.setStock(item.getStock()-1);
         entityManager.merge(item);
