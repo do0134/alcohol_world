@@ -47,10 +47,4 @@ public class ItemController {
         Page<SalesItem> salesItems = itemService.getSalesItems(pageable, ItemType.valueOf(itemType));
         return Response.success(salesItems);
     }
-
-    @PutMapping("/pay/{userId}/{itemId}")
-    public Response<Void> pay(@PathVariable("userId") Long userId, @PathVariable("itemId") Long itemId) {
-        itemService.pay(userId, itemId);
-        return Response.success();
-    }
 }

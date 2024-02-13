@@ -21,6 +21,4 @@ public interface ItemService {
     OrderItem getOrderItem(Long salesItemId);
 
     Page<SalesItem> getSalesItems(Pageable pageable, ItemType itemType);
-
-    void pay(Long userId, Long itemId);
 }

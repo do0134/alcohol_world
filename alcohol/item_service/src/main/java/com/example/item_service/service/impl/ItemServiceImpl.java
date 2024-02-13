@@ -11,19 +11,17 @@ import com.example.item_service.model.entity.SalesItemEntity;
 import com.example.item_service.repository.ItemRepository;
 import com.example.item_service.repository.SalesItemRepository;
 import com.example.item_service.service.ItemService;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.connection.stream.ObjectRecord;
-import org.springframework.data.redis.connection.stream.StreamRecords;
+import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -32,7 +30,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final SalesItemRepository salesItemRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -63,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime));
-//        publishSalesItemQuantity(itemId, stock);
+        publishSalesItemQuantity(itemId, stock);
     }
 
     @Override
@@ -88,34 +85,29 @@ public class ItemServiceImpl implements ItemService {
         return reservationItems.map(SalesItem::fromEntity);
     }
 
-    @Override
-    @Transactional
-    public void pay(Long userId, Long itemId) {
-
-        SalesItemEntity item = entityManager.find(SalesItemEntity.class, itemId);
-
-        if (item.getStock() < 1) {
-            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM, String.format("%s님의 주문이 실패했습니다. 재고가 부족합니다.", userId));
-        }
-
-        item.setStock(item.getStock()-1);
-        entityManager.merge(item);
-    }
 
     public ItemEntity getItemEntity(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
     }
 
     public void publishSalesItemQuantity(Long itemId, Long stock){
-        ObjectRecord<String, Long> record = StreamRecords.newRecord()
-                .ofObject(stock)
-                .withStreamKey(getRedisKey(itemId));
+        ObjectRecord<String, Map<String, Object>> record = StreamRecords.newRecord()
+                        .in("SalesItem")
+                        .ofObject(createStockMap(itemId, stock));
+
         redisTemplate.opsForStream().add(record);
-        log.info(String.format(String.format("Stream for item %s has started. Initial inventory is %d.", itemId, stock)));
+
+        log.info(String.format(String.format("Stream for item %s has started. Initial inventory is %s.", String.valueOf(itemId), String.valueOf(stock))));
+    }
+
+    public Map<String, Object> createStockMap(Long itemId, Long stock) {
+        Map<String, Object> stockMap = new HashMap<>();
+        stockMap.put(getRedisKey(itemId),String.valueOf(stock));
+        return stockMap;
     }
 
     public String getRedisKey(Long itemId) {
         String redisKey = "SalesItem";
-        return redisKey + " " + itemId;
+        return redisKey + ": " + itemId;
     }
 }
