@@ -12,6 +12,8 @@ import com.example.order_service.service.ItemFeignClient;
 import com.example.order_service.service.OrderService;
 import com.example.order_service.service.UserFeignClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +27,16 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ItemFeignClient itemFeignClient;
     private final UserFeignClient userFeignClient;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    @Transactional
     public Order makeOrder(Long userId, Long itemId, Long quantity) {
         OrderUser orderUser = getOrderUser(userId);
         OrderItem orderItem = getOrderItem(itemId);
         Long totalPrice = (long)quantity*orderItem.getPrice();
-        orderRepository.save(OrderEntity.toEntity(userId, itemId,quantity, totalPrice));
-        return Order.toDto(orderUser,orderItem,quantity,totalPrice);
+        Order order = Order.toDto(orderUser,orderItem,quantity,totalPrice);
+        redisTemplate.opsForHash().put("Order",getOrderRedisKey(userId,itemId),order);
+        return order;
     }
 
     @Override
@@ -62,6 +65,21 @@ public class OrderServiceImpl implements OrderService {
         return Order.toDto(orderUser, orderItem, orderEntity.getQuantity(), orderEntity.getTotalPrice());
     }
 
+    @Override
+    @Transactional
+    public Order pay(Long userId, Long itemId) {
+        try {
+            Order order = (Order) redisTemplate.opsForHash().get("Order", getOrderRedisKey(userId, itemId));
+            Long quantity = order.getQuantity();
+            redisTemplate.opsForStream().range("SalesItem", Range.closed("+", "-"));
+
+        } catch (Exception e) {
+            throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
+        }
+
+        return new Order();
+    }
+
     public OrderUser getOrderUser(Long userId) {
         Response<OrderUser> orderUser = userFeignClient.getUser(userId);
         if (!orderUser.getResultCode().equals("SUCCESS")) {
@@ -79,5 +97,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return orderItem.getResult();
+    }
+
+    public String getOrderRedisKey(Long userId, Long itemId) {
+        return String.format("%s order %s",userId, itemId);
+    }
+
+    public String getItemRedisKey(Long itemId) {
+        String redisKey = "SalesItem";
+        return redisKey + ": " + itemId;
     }
 }
