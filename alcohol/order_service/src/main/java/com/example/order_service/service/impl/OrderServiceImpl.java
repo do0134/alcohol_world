@@ -90,17 +90,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order pay(Long userId, Long itemId) {
-        try {
-            Order order = createOrder(userId, itemId);
-            Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
-            Long stock = Long.valueOf((String) stockObject);
-            String orderKey = getOrderRedisKey(userId, itemId);
-            deleteRedisKey(orderKey);
-            updateStock(itemId, stock-1);
-            return order;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+//            Order order = createOrder(userId, itemId);
+        Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
+        Long stock = Long.valueOf((String) stockObject);
+//            String orderKey = getOrderRedisKey(userId, itemId);
+//            deleteRedisKey(orderKey);
+
+
+        if (stock <= 0L) {
+            throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
         }
+
+        updateStock(itemId, stock-1);
+        return new Order();
     }
 
     public void saveOrder(Order order, Long userId, Long itemId) {
