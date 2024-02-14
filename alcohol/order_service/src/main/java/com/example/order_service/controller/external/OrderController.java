@@ -33,8 +33,9 @@ public class OrderController {
         return Response.success(order);
     }
 
-    @PostMapping("/{orderId}")
-    public Response<Void> doPay(@PathVariable("orderId") Long orderId) {
-        return Response.success();
+    @PostMapping("/pay/{userId}/{itemId}")
+    public Response<Order> doPay(@PathVariable("userId") Long userId, @PathVariable("itemId") Long itemId) {
+        Order order = orderService.pay(userId, itemId);
+        return Response.success(order);
     }
 }

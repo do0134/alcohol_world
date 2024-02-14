@@ -12,15 +12,18 @@ import com.example.order_service.service.ItemFeignClient;
 import com.example.order_service.service.OrderService;
 import com.example.order_service.service.UserFeignClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Range;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -28,14 +31,12 @@ public class OrderServiceImpl implements OrderService {
     private final ItemFeignClient itemFeignClient;
     private final UserFeignClient userFeignClient;
     private final RedisTemplate<String, Object> redisTemplate;
-    // TODO : Redis 로직 모두 손보기
-    // TODO : Order에서 RedisStream이 나가야하고, Item에서는 opsForValue라던지, 다른 자료형을 통해 저장하고 수정해야 함
-    // TODO : Order할 때 RedisStream에 메세지를 적재하고, pay할 때 나가는 형식으로 해야한다. pay할 때 order를 mysql에 저장하는 건 덤
-    // TODO : 이렇게하면 pay에 실패하더라도, 트랜잭션 롤백할 이유가 없어진다.
+
     @Override
     public Order makeOrder(Long userId, Long itemId, Long quantity) {
         OrderUser orderUser = getOrderUser(userId);
         OrderItem orderItem = getOrderItem(itemId);
+        checkTime(orderItem.getStart_time(), orderItem.getEnd_time());
         Long totalPrice = (long)quantity*orderItem.getPrice();
         Order order = Order.toDto(orderUser,orderItem,quantity,totalPrice);
         redisTemplate.opsForHash().put("Order",getOrderRedisKey(userId,itemId),order);
@@ -73,14 +74,25 @@ public class OrderServiceImpl implements OrderService {
     public Order pay(Long userId, Long itemId) {
         try {
             Order order = (Order) redisTemplate.opsForHash().get("Order", getOrderRedisKey(userId, itemId));
-            Long quantity = order.getQuantity();
-            redisTemplate.opsForStream().range("SalesItem", Range.closed("+", "-"));
-
+            System.out.println(order);
+            Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
+            System.out.println(stockObject);
+            Long stock = (Long) stockObject;
+            updateStock(itemId, stock-1);
+            saveOrder(order, userId, itemId);
+            return order;
         } catch (Exception e) {
             throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
         }
+    }
 
-        return new Order();
+    public void saveOrder(Order order, Long userId, Long itemId) {
+        OrderEntity.toEntity(userId, itemId, order.getQuantity(), order.getTotalPrice());
+    }
+
+    public Boolean checkTime(Timestamp startTime, Timestamp endTime) {
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        return now.after(startTime) && now.before(endTime);
     }
 
     public OrderUser getOrderUser(Long userId) {
@@ -107,7 +119,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public String getItemRedisKey(Long itemId) {
-        String redisKey = "SalesItem";
-        return redisKey + ": " + itemId;
+        return "SalesItem:" + String.valueOf(itemId);
+    }
+
+    public void updateStock(Long itemId, Long stock) {
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        hashOperations.putAll("SalesItem", getRedisHash(itemId, stock));
+        log.info(String.format("Stream for item %s has changed. Update inventory is %s.", String.valueOf(itemId), String.valueOf(stock)));
+    }
+
+    public Map<String, Object> getRedisHash(Long itemId, Long stock) {
+        String key = getItemRedisKey(itemId);
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, String.valueOf(stock));
+        return map;
     }
 }

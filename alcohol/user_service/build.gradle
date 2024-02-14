@@ -3,15 +3,14 @@ plugins {
 
 dependencies {
     implementation project(":common")
-    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // jwt
-    api group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
-    // security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    // jwt
+//    api group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+//    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+//    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+//
+//    // security
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
 tasks.named('test') {

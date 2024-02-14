@@ -75,6 +75,8 @@ public class ItemServiceImpl implements ItemService {
         OrderItem orderItem = new OrderItem();
         orderItem.setName(salesItemEntity.getItem().getName());
         orderItem.setPrice(salesItemEntity.getPrice());
+        orderItem.setStart_time(salesItemEntity.getStartTime());
+        orderItem.setEnd_time(salesItemEntity.getEndTime());
         return orderItem;
     }
 

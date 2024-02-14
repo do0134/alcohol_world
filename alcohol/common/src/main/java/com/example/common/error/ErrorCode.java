@@ -24,7 +24,8 @@ public enum ErrorCode {
     NO_SUCH_ITEM(HttpStatus.BAD_REQUEST, "No Such Items."),
     ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Item Already Exist"),
 
-    NO_SUCH_ORDER(HttpStatus.BAD_REQUEST, "No such Order");
+    NO_SUCH_ORDER(HttpStatus.BAD_REQUEST, "No such Order"),
+    INVALID_TIME(HttpStatus.BAD_REQUEST, "Cannot access item now");
 
     private final HttpStatus status;
     private final String message;
