@@ -13,7 +13,6 @@ import com.example.order_service.service.OrderService;
 import com.example.order_service.service.UserFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Range;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -34,12 +34,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order makeOrder(Long userId, Long itemId, Long quantity) {
+        String key = getOrderRedisKey(userId, itemId);
+        redisTemplate.opsForHash().putAll(key, createOrderHash(userId, itemId, quantity));
+        redisTemplate.expire(key, 10, TimeUnit.MINUTES);
         OrderUser orderUser = getOrderUser(userId);
         OrderItem orderItem = getOrderItem(itemId);
         checkTime(orderItem.getStart_time(), orderItem.getEnd_time());
         Long totalPrice = (long)quantity*orderItem.getPrice();
         Order order = Order.toDto(orderUser,orderItem,quantity,totalPrice);
-        redisTemplate.opsForHash().put("Order",getOrderRedisKey(userId,itemId),order);
+        return order;
+    }
+
+    public Order createOrder(Long userId, Long itemId) {
+        String key = getOrderRedisKey(userId, itemId);
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+        if (map.isEmpty()) {
+            throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
+        }
+
+        Long quantity = Long.valueOf((String) map.get("quantity"));
+        OrderUser orderUser = getOrderUser(userId);
+        OrderItem orderItem = getOrderItem(itemId);
+        Long totalPrice = (long)quantity*orderItem.getPrice();
+        Order order = Order.toDto(orderUser,orderItem,quantity,totalPrice);
+        saveOrder(order, userId, itemId);
         return order;
     }
 
@@ -73,21 +91,20 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order pay(Long userId, Long itemId) {
         try {
-            Order order = (Order) redisTemplate.opsForHash().get("Order", getOrderRedisKey(userId, itemId));
-            System.out.println(order);
+            Order order = createOrder(userId, itemId);
             Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
-            System.out.println(stockObject);
-            Long stock = (Long) stockObject;
+            Long stock = Long.valueOf((String) stockObject);
+            String orderKey = getOrderRedisKey(userId, itemId);
+            deleteRedisKey(orderKey);
             updateStock(itemId, stock-1);
-            saveOrder(order, userId, itemId);
             return order;
         } catch (Exception e) {
-            throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     public void saveOrder(Order order, Long userId, Long itemId) {
-        OrderEntity.toEntity(userId, itemId, order.getQuantity(), order.getTotalPrice());
+        orderRepository.save(OrderEntity.toEntity(userId, itemId, order.getQuantity(), order.getTotalPrice()));
     }
 
     public Boolean checkTime(Timestamp startTime, Timestamp endTime) {
@@ -115,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public String getOrderRedisKey(Long userId, Long itemId) {
-        return String.format("%s order %s",userId, itemId);
+        return String.format("user%s" + "order"+"item%s",userId, itemId);
     }
 
     public String getItemRedisKey(Long itemId) {
@@ -133,5 +150,17 @@ public class OrderServiceImpl implements OrderService {
         Map<String, Object> map = new HashMap<>();
         map.put(key, String.valueOf(stock));
         return map;
+    }
+
+    public Map<String, Object> createOrderHash(Long userId, Long itemId, Long quantity) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", String.valueOf(userId));
+        map.put("itemId", String.valueOf(itemId));
+        map.put("quantity", String.valueOf(quantity));
+        return map;
+    }
+
+    public void deleteRedisKey(String key) {
+        redisTemplate.delete(key);
     }
 }
