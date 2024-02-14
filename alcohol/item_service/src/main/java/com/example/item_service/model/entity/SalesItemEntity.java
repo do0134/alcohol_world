@@ -44,6 +44,7 @@ public class SalesItemEntity {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+
     @PrePersist
     void createdAt() {
         this.createdAt = Timestamp.from(Instant.now());

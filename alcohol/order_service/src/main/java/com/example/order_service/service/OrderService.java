@@ -8,4 +8,5 @@ public interface OrderService {
     Order makeOrder(Long userId, Long itemId, Long quantity);
     List<Order> getUserOrder(Long userId);
     Order getOrder(Long orderId);
+    Order pay(Long userId, Long itemId);
 }

@@ -5,6 +5,8 @@ import com.example.item_service.model.ItemType;
 import com.example.item_service.model.dto.Item;
 import com.example.item_service.model.dto.OrderItem;
 import com.example.item_service.model.dto.SalesItem;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.sql.Timestamp;
 
@@ -17,4 +19,7 @@ public interface ItemService {
     SalesItem getSalesItem(Long salesItemId);
 
     OrderItem getOrderItem(Long salesItemId);
+
+    Page<SalesItem> getSalesItems(Pageable pageable, ItemType itemType);
+    Long getStock(Long itemId);
 }

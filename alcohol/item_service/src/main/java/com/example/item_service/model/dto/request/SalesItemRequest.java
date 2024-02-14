@@ -1,4 +1,4 @@
-package com.example.item_service.model.dto;
+package com.example.item_service.model.dto.request;
 
 import com.example.item_service.model.ItemType;
 import lombok.Data;
