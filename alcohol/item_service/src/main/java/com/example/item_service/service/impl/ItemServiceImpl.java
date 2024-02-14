@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,12 +100,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public void publishSalesItemQuantity(Long itemId, Long stock){
-        redisTemplate.opsForHash().put("SalesItem", getRedisKey(itemId), String.valueOf(stock));
-        log.info(String.format(String.format("Stream for item %s has started. Initial inventory is %s.", String.valueOf(itemId), String.valueOf(stock))));
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        hashOperations.putAll("SalesItem", getRedisHash(itemId, stock));
+        log.info(String.format("Stream for item %s has started. Initial inventory is %s.", String.valueOf(itemId), String.valueOf(stock)));
     }
 
     public String getRedisKey(Long itemId) {
-        String redisKey = "SalesItem";
-        return redisKey + ": " + itemId;
+        return "SalesItem:" + String.valueOf(itemId);
+    }
+
+    public Map<String, Object> getRedisHash(Long itemId, Long stock) {
+        String key = getRedisKey(itemId);
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, String.valueOf(stock));
+        return map;
     }
 }
