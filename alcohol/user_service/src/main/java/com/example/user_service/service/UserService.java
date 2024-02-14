@@ -68,7 +68,6 @@ public class UserService {
     }
 
 //    public String userLogin(String userEmail, String password, String deviceId) {
-//        System.out.println("여기와요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //        if (!checkPassword(userEmail, password)) {
 //            throw new AlcoholException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "이메일이나 비밀번호가 잘못됐습니다.");
 //        }
