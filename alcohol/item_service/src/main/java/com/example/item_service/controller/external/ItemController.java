@@ -6,6 +6,7 @@ import com.example.item_service.model.ItemType;
 import com.example.item_service.model.dto.Item;
 import com.example.item_service.model.dto.SalesItem;
 import com.example.item_service.model.dto.request.SalesItemRequest;
+import com.example.item_service.model.dto.response.StockResponse;
 import com.example.item_service.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,5 +47,11 @@ public class ItemController {
     public Response<Page<SalesItem>> getSalesItems(Pageable pageable, @RequestParam String itemType) {
         Page<SalesItem> salesItems = itemService.getSalesItems(pageable, ItemType.valueOf(itemType));
         return Response.success(salesItems);
+    }
+
+    @GetMapping("/salesItem/{salesItemId}")
+    public Response<StockResponse> getStock(@PathVariable("salesItemId") Long salesItemId) {
+        Long stock = itemService.getStock(salesItemId);
+        return Response.success(StockResponse.fromStock(stock));
     }
 }

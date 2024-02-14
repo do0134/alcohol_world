@@ -28,7 +28,10 @@ public class OrderServiceImpl implements OrderService {
     private final ItemFeignClient itemFeignClient;
     private final UserFeignClient userFeignClient;
     private final RedisTemplate<String, Object> redisTemplate;
-
+    // TODO : Redis 로직 모두 손보기
+    // TODO : Order에서 RedisStream이 나가야하고, Item에서는 opsForValue라던지, 다른 자료형을 통해 저장하고 수정해야 함
+    // TODO : Order할 때 RedisStream에 메세지를 적재하고, pay할 때 나가는 형식으로 해야한다. pay할 때 order를 mysql에 저장하는 건 덤
+    // TODO : 이렇게하면 pay에 실패하더라도, 트랜잭션 롤백할 이유가 없어진다.
     @Override
     public Order makeOrder(Long userId, Long itemId, Long quantity) {
         OrderUser orderUser = getOrderUser(userId);

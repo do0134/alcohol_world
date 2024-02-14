@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +65,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public SalesItem getSalesItem(Long salesItemId) {
         SalesItemEntity salesItemEntity = salesItemRepository.findById(salesItemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
-
         return SalesItem.fromEntity(salesItemEntity);
     }
 
@@ -85,25 +83,24 @@ public class ItemServiceImpl implements ItemService {
         return reservationItems.map(SalesItem::fromEntity);
     }
 
+    @Override
+    public Long getStock(Long itemId) {
+        Object stock = redisTemplate.opsForHash().get("SalesItem", getRedisKey(itemId));
+        try {
+            return Long.valueOf((String) stock);
+        } catch (Exception e) {
+            throw new AlcoholException(ErrorCode.NO_SUCH_ITEM);
+        }
+    }
+
 
     public ItemEntity getItemEntity(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new AlcoholException(ErrorCode.NO_SUCH_ITEM));
     }
 
     public void publishSalesItemQuantity(Long itemId, Long stock){
-        ObjectRecord<String, Map<String, Object>> record = StreamRecords.newRecord()
-                        .in("SalesItem")
-                        .ofObject(createStockMap(itemId, stock));
-
-        redisTemplate.opsForStream().add(record);
-
+        redisTemplate.opsForHash().put("SalesItem", getRedisKey(itemId), String.valueOf(stock));
         log.info(String.format(String.format("Stream for item %s has started. Initial inventory is %s.", String.valueOf(itemId), String.valueOf(stock))));
-    }
-
-    public Map<String, Object> createStockMap(Long itemId, Long stock) {
-        Map<String, Object> stockMap = new HashMap<>();
-        stockMap.put(getRedisKey(itemId),String.valueOf(stock));
-        return stockMap;
     }
 
     public String getRedisKey(Long itemId) {
