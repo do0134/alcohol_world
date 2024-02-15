@@ -7,8 +7,7 @@ import time
 def send_http_request(url, userId, itemId):
     global my_dict, error, real_error
     try:
-        flag = False
-        response = requests.put(f"{url}/{userId}/{itemId}")
+        response = requests.post(f"{url}/{userId}/{itemId}")
         data = response.json()
         result_code = data.get("resultCode")
         if result_code == "SUCCESS":
@@ -27,7 +26,7 @@ def main():
     num_requests = 10000
     my_dict = {i: 0 for i in range(1,11)}
     # Set the target URL
-    base_url = "http://localhost:8084/api/v1/item/pay"
+    base_url = "http://localhost:8085/api/v1/order/pay"
 
     start_time = time.time()
     error = 0
