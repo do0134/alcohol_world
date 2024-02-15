@@ -59,8 +59,8 @@ public class ItemServiceImpl implements ItemService {
             throw new AlcoholException(ErrorCode.ITEM_ALREADY_EXIST, "존재하는 판매상품입니다.");
         }
 
-        salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime));
-        publishSalesItemQuantity(itemId, stock);
+        SalesItemEntity salesItemEntity = salesItemRepository.save(SalesItemEntity.toEntity(item,itemType,price,stock,startTime,endTime));
+        publishSalesItemQuantity(salesItemEntity.getId(), stock);
     }
 
     @Override
