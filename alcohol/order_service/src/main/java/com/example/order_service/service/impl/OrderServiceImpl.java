@@ -91,17 +91,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order pay(Long userId, Long itemId) {
 //            Order order = createOrder(userId, itemId);
-        Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
-        Long stock = Long.valueOf((String) stockObject);
+
 //            String orderKey = getOrderRedisKey(userId, itemId);
 //            deleteRedisKey(orderKey);
 
-
-        if (stock <= 0L) {
-            throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
-        }
-
-        updateStock(itemId, stock-1);
+        updateStock(itemId);
         return new Order();
     }
 
@@ -141,10 +135,26 @@ public class OrderServiceImpl implements OrderService {
         return "SalesItem:" + String.valueOf(itemId);
     }
 
-    public void updateStock(Long itemId, Long stock) {
-        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
-        hashOperations.putAll("SalesItem", getRedisHash(itemId, stock));
-        log.info(String.format("Stream for item %s has changed. Update inventory is %s.", String.valueOf(itemId), String.valueOf(stock)));
+    public void updateStock(Long itemId) {
+        redisTemplate.watch(getItemRedisKey(itemId));
+
+        try {
+            redisTemplate.multi();
+
+            Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
+            Long stock = Long.valueOf((String) stockObject);
+            if (stock <= 0L) {
+                throw new AlcoholException(ErrorCode.NO_SUCH_ORDER);
+            }
+
+            HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+            hashOperations.putAll("SalesItem", getRedisHash(itemId, stock-1));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            redisTemplate.unwatch();
+        }
     }
 
     public Map<String, Object> getRedisHash(Long itemId, Long stock) {

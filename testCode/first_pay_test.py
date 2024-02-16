@@ -7,8 +7,7 @@ import time
 def send_http_request(url, userId, itemId):
     global my_dict, error, real_error
     try:
-        flag = False
-        response = requests.put(f"{url}/{userId}/{itemId}")
+        response = requests.post(f"{url}/{userId}/{itemId}")
         data = response.json()
         result_code = data.get("resultCode")
         if result_code == "SUCCESS":
@@ -17,6 +16,7 @@ def send_http_request(url, userId, itemId):
             error += 1
 
     except Exception as e:
+        print(e)
         real_error += 1
         print(f"Error sending request to {url} with userId {userId} and itemId {itemId}: {e}")
 
@@ -24,10 +24,10 @@ def send_http_request(url, userId, itemId):
 def main():
     global my_dict, error, real_error
     # Set the number of concurrent requests (N)
-    num_requests = 10000
+    num_requests = 10
     my_dict = {i: 0 for i in range(1,11)}
     # Set the target URL
-    base_url = "http://localhost:8084/api/v1/item/pay"
+    base_url = "http://localhost:8085/api/v1/order/pay"
 
     start_time = time.time()
     error = 0
@@ -35,7 +35,7 @@ def main():
     # Create a ThreadPoolExecutor to send concurrent requests
     with ThreadPoolExecutor(max_workers=num_requests) as executor:
         # Use a list comprehension to create a list of tasks
-        tasks = [executor.submit(send_http_request, base_url, userId, random.randint(1, 10)) for userId in
+        tasks = [executor.submit(send_http_request, base_url, userId, random.randint(146,155)) for userId in
                  range(1, num_requests + 1)]
 
         # Wait for all tasks to complete

@@ -12,14 +12,9 @@ def send_http_request(url, userId, itemId):
             "itemId": itemId
         }
         # POST 요청 시 json 매개변수에 데이터 전달
-        response = requests.post(url, json=body)
-        response = requests.post(f"{url}/{userId}/{itemId}")
+        response = requests.post(f"{url}/{userId}/{itemId}", json=body)
         data = response.json()
         result_code = data.get("resultCode")
-        if result_code == "SUCCESS":
-            my_dict[itemId] += 1
-        else:
-            error += 1
 
     except Exception as e:
         real_error += 1
@@ -28,10 +23,8 @@ def send_http_request(url, userId, itemId):
 
 def main():
     global my_dict, error, real_error
-    # Set the number of concurrent requests (N)
     num_requests = 10000
     my_dict = {i: 0 for i in range(1,11)}
-    # Set the target URL
     base_url = "http://localhost:8085/api/v1/order"
 
     start_time = time.time()
