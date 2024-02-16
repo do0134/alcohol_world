@@ -10,11 +10,6 @@ dependencies {
     testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.3"
-    }
-}
 
 asciidoctor {
     dependsOn test // (2)
@@ -27,13 +22,13 @@ bootJar {
     }
 }
 
-tasks.named('bootJar'){ // bootJar 세팅을 켜기
-    enabled = true
-}
-
-tasks.named('jar'){ // jar 설정은 끄기
-    enabled = false
-}
+//tasks.named('bootJar'){ // bootJar 세팅을 켜기
+//    enabled = true
+//}
+//
+//tasks.named('jar'){ // jar 설정은 끄기
+//    enabled = false
+//}
 
 
 tasks.named('test') {

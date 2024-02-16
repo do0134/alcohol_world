@@ -13,13 +13,19 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "사용자를 찾을 수 없습니다."),
     CANNOT_SAVE(HttpStatus.BAD_REQUEST, "프로필 사진을 저장할 수 없습니다."),
     DUPLICATED_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "이미 같은 닉네임으로 저장된 프로필 사진이 존재합니다."),
-    INVALID_PERMISSION(HttpStatus.BAD_REQUEST, "허가받지 않은 접근입니다."),
+    INVALID_PERMISSION(HttpStatus.BAD_REQUEST, "Invalid Permission"),
 
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "이미 팔로우한 계정입니다."),
     CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자신을 팔로우할 수 없습니다."),
 
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
-    ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다.");
+    ALREADY_LIKE(HttpStatus.BAD_REQUEST, "이미 좋아요를 눌렀습니다."),
+
+    NO_SUCH_ITEM(HttpStatus.BAD_REQUEST, "No Such Items."),
+    ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Item Already Exist"),
+
+    NO_SUCH_ORDER(HttpStatus.BAD_REQUEST, "No such Order"),
+    INVALID_TIME(HttpStatus.BAD_REQUEST, "Cannot access item now");
 
     private final HttpStatus status;
     private final String message;

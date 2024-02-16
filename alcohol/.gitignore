@@ -44,4 +44,5 @@ bin/
 .idea
 application.yml
 alcohol.iml
+docker-compose.yml
 /resources/
