@@ -22,18 +22,27 @@ docker-compose up -d
 
 ### 4. ERD
 
+**User**
+![alt text](/readme_image/user_erd.png)
+
+**activity**
+![alt text](/readme_image/activity_erd.png)
+
 
 **Order, Item**
 ![alt text](/readme_image/image-1.png)
 
 ### 5. API 명세서
 
+**종합**
+[Total](https://www.notion.so/c22dd4071756475393da255f8e87c640?pvs=21)
+
 **UserService**
-
+[UserService ](https://www.notion.so/0deac2cd0ac34b258fc64a8cae810de2?pvs=21)
 **ActivityService**
-
+[ActivityService](https://www.notion.so/384f01d2d60540a4ac5ae428765c022f?pvs=21)
 **NewsfeedService**
-
+[NewsfeedService](https://www.notion.so/4bd827fee7204dc4a25b80882874d20b?pvs=21)
 **ItemService**
 [ItemService(:8084)](https://www.notion.so/4be898da330043e2a61a21386571505c?pvs=21)
 
