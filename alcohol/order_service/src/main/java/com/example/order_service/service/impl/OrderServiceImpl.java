@@ -88,15 +88,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
-    public Order pay(Long userId, Long itemId) {
+//    @Transactional
+    public void pay(Long userId, Long itemId) {
 //            Order order = createOrder(userId, itemId);
 
 //            String orderKey = getOrderRedisKey(userId, itemId);
 //            deleteRedisKey(orderKey);
 
         updateStock(itemId);
-        return new Order();
     }
 
     public void saveOrder(Order order, Long userId, Long itemId) {
@@ -136,9 +135,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public void updateStock(Long itemId) {
-        redisTemplate.watch(getItemRedisKey(itemId));
 
         try {
+            redisTemplate.watch(getItemRedisKey(itemId));
             redisTemplate.multi();
 
             Object stockObject = redisTemplate.opsForHash().get("SalesItem", getItemRedisKey(itemId));
@@ -149,7 +148,6 @@ public class OrderServiceImpl implements OrderService {
 
             HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
             hashOperations.putAll("SalesItem", getRedisHash(itemId, stock-1));
-
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         } finally {

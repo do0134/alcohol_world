@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/internal")
+@RequestMapping("/api/v1/internal/posts")
 public class NewsfeedInternalController {
 
     private final NewsFeedService newsFeedService;
