@@ -1,0 +1,6 @@
+[submodule "order_service"]
+	path = order_service
+	url = https://github.com/do0134/pre-order-order
+[submodule "order_api_gateway"]
+	path = order_api_gateway
+	url = https://github.com/do0134/order_api_gateway.git
