@@ -14,12 +14,13 @@ public interface ItemService {
     void createItem(String name, String content, String image);
     Item getItem(Long itemId);
 
-    void createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime);
+    SalesItem createSalesItem(Long itemId, ItemType itemType, Long price, Long stock, Timestamp startTime, Timestamp endTime);
 
     SalesItem getSalesItem(Long salesItemId);
 
     OrderItem getOrderItem(Long salesItemId);
 
     Page<SalesItem> getSalesItems(Pageable pageable, ItemType itemType);
-    Long getStock(Long itemId);
+    Long getStock(Long salesItemId);
+    void updateStock(Long salesItemId);
 }
