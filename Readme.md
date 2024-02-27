@@ -6,6 +6,7 @@
   - [3. 시스템 아키텍처](#3-시스템-아키텍처)
   - [4. ERD](#4-erd)
   - [5. API 명세서](#5-api-명세서)
+  - [6. 기타 모듈](#6-기타-모듈)
 
 
 ### 1. 프로젝트 개요
@@ -50,4 +51,5 @@ docker-compose up -d
 [OrderService(:8085)](https://www.notion.so/b49b52a62b904ebc91a22a3ccd4b6cb2?pvs=21)
 
 
-
+### 6. 기타 모듈
+Order_Service(재고관리) : https://github.com/do0134/pre-order-order
