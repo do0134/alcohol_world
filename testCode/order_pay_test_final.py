@@ -5,18 +5,11 @@ import time
 import redis
 from collections import defaultdict
 
-
 BASE_URL = "http://localhost:8085/api/v1/order"
 min_v = 176
 max_v = 185
 my_dict = {i: 0 for i in range(min_v, max_v + 1)}
-order_exception = 0
-pay_exception = 0
-error = 0
-heartbeat_error = 0
 dont_pay = 0
-pay_low_quantity = 0
-order_low_quantity = 0
 error_type = defaultdict(int)
 
 
@@ -36,7 +29,7 @@ def send_heartbeat(userId, itemId):
 
 
 def send_order_requests(userId):
-    global order_exception, pay_exception, error, heartbeat_error, dont_pay, pay_low_quantity, order_low_quantity
+    global dont_pay
     try:
         # 아이템 Id 뽑기
         itemId = random.randint(min_v, max_v)
@@ -48,12 +41,10 @@ def send_order_requests(userId):
         # Order 요청 실행 안됐으면 반환
         if create_order_result_code != "SUCCESS":
             error_type[create_order_result_code] += 1
-            order_exception += 1
             return
 
         # 20% 확률로 사용자는 결제하지 않음(요구사항)
-        percentage = random.randint(0,99)
-
+        percentage = random.randint(0, 99)
 
         if percentage < 20:
             dont_pay += 1
@@ -69,11 +60,14 @@ def send_order_requests(userId):
             else:
                 my_dict[itemId] += 1
     except Exception as e:
+        if "HTTPConnectionPool(host='localhost', port=8085): Max retries exceeded with url" in str(e):
+            e = "HTTPConnectionPool(host='localhost', port=8085): Max retries exceeded with url"
+
         error_type[str(e)] += 1
 
 
 def main():
-    global my_dict, order_exception, pay_exception, error
+    global my_dict
     # request보낼 수 == user의 수
     num_requests = 10000
 
