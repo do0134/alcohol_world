@@ -56,8 +56,9 @@ def send_order_requests(userId):
             pay_response = requests.post(f"{BASE_URL}/pay/{userId}/{itemId}")
             pay_result_code = pay_response.json().get("resultCode")
             if pay_result_code != "SUCCESS":
-                error_type[create_order_result_code] += 1
+                error_type[pay_result_code] += 1
             else:
+                error_type[pay_result_code] += 1
                 my_dict[itemId] += 1
     except Exception as e:
         if "HTTPConnectionPool(host='localhost', port=8085): Max retries exceeded with url" in str(e):
