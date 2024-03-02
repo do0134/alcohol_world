@@ -1,9 +1,11 @@
-import requests
 import random
-from concurrent.futures import ThreadPoolExecutor
 import time
-import redis
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+import redis
+import requests
 
 BASE_URL = "http://localhost:8085/api/v1/order"
 min_v = 176
@@ -11,6 +13,13 @@ max_v = 185
 my_dict = {i: 0 for i in range(min_v, max_v + 1)}
 dont_pay = 0
 error_type = defaultdict(int)
+
+session = requests.Session()
+
+retry = Retry(connect=3, backoff_factor=0.5)
+adapter = HTTPAdapter(max_retries=retry)
+
+session.mount('http://', adapter)
 
 
 def send_heartbeat(userId, itemId):
@@ -35,7 +44,7 @@ def send_order_requests(userId):
         itemId = random.randint(min_v, max_v)
 
         # Order 요청 보내기
-        create_order_response = requests.post(f"{BASE_URL}/{userId}/{itemId}")
+        create_order_response = session.post(f"{BASE_URL}/{userId}/{itemId}")
         create_order_result_code = create_order_response.json().get("resultCode")
 
         # Order 요청 실행 안됐으면 반환
@@ -53,7 +62,7 @@ def send_order_requests(userId):
             # 결제 창에 있다는 것을 알리는 HeartBeat 작동
             # send_heartbeat(userId, itemId)
             # 결제 요청 보내기
-            pay_response = requests.post(f"{BASE_URL}/pay/{userId}/{itemId}")
+            pay_response = session.post(f"{BASE_URL}/pay/{userId}/{itemId}")
             pay_result_code = pay_response.json().get("resultCode")
             if pay_result_code != "SUCCESS":
                 error_type[pay_result_code] += 1
